@@ -115,7 +115,34 @@ main{justify-content:flex-start!important}
 #fieldPanel #worldLayer,#fieldPanel #terrainCanvas{width:100%!important;height:100%!important}
 #fieldPanel #dialogue:not([hidden]){position:fixed!important}
 @media(orientation:landscape){#fieldPanel{grid-template-rows:auto minmax(90px,1fr) auto auto!important}#fieldPanel>.field{min-height:90px!important}}
-</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.7.1</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
+
+/* v0.7.2: exclusive battle scene, safe-area aware and viewport-fitted */
+html,body{height:100%;height:100dvh;overflow:hidden!important}
+body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+main{min-height:0!important;overflow:hidden!important}
+#battle{display:none!important}
+#battle.active{display:flex!important;flex:1 1 auto!important;min-height:0!important;min-width:0!important;flex-direction:column!important;overflow:hidden!important;gap:clamp(3px,1dvh,8px)!important}
+body:has(#battle.active) #fieldPanel,body:has(#battle.active) #statsPanel{display:none!important}
+body:has(#battle.active) main{display:flex!important;flex-direction:column!important;max-width:100%!important;align-items:stretch!important;grid-template-columns:none!important}
+body:has(#battle.active) #battle .arena{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;display:flex!important;align-items:center!important;padding:clamp(5px,2dvh,18px)!important}
+body:has(#battle.active) #battle h3{flex:0 0 auto;font-size:clamp(15px,3dvh,23px);margin:0!important}
+body:has(#battle.active) #battle .log{flex:0 0 auto;min-height:0!important;max-height:2.7em;overflow:hidden;font-size:clamp(11px,2dvh,15px);margin:0!important}
+body:has(#battle.active) #battle .actions{flex:0 0 auto;margin:0!important;gap:6px}
+body:has(#battle.active) #battle .actions button{font-size:clamp(11px,2dvh,15px);padding:clamp(5px,1.3dvh,12px)}
+body:has(#battle.active) #battle .hint{flex:0 0 auto;margin:0!important;font-size:clamp(9px,1.5dvh,12px)}
+body:has(#battle.active) .fighter{min-width:0!important;max-width:48%;gap:clamp(2px,1dvh,6px)}
+body:has(#battle.active) .fighter .sprite{height:clamp(50px,12dvh,90px)!important}
+body:has(#battle.active) .fighter .pixelhero{transform:scale(clamp(.85,1.5,1.6))!important}
+body:has(#battle.active) .fighter b{font-size:clamp(11px,2.3dvh,17px)}
+body:has(#battle.active) .fighter .hp{width:min(20vw,115px)}
+@media(orientation:landscape) and (max-height:550px){
+ body:has(#battle.active) header{padding:3px 12px!important;min-height:30px!important}
+ body:has(#battle.active) #battle .arena{min-height:0!important}
+ body:has(#battle.active) #battle .fighter .sprite{height:clamp(38px,13dvh,65px)!important}
+ body:has(#battle.active) #battle .fighter .pixelhero{transform:scale(1)!important}
+ body:has(#battle.active) #battle .hint{display:none!important}
+}
+</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.7.2</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
 <main><section class="panel" id="statsPanel"><div class="stats"><b id="level"></b><span id="xp"></span><span id="gold"></span><span id="potions"></span><span id="quest"></span></div></section>
 <section class="panel fieldpanel" id="fieldPanel"><div class="story" id="story"></div><div id="dialogue" hidden><b id="speaker"></b><p id="dialogueText"></p><button id="dialogueNext">다음 대사 ▶</button></div><div class="field" id="field" aria-label="무림 필드"><div id="worldLayer"><canvas id="terrainCanvas" width="720" height="540"></canvas></div><div id="fieldActor"></div></div><div class="hudrow"><div class="mapcolumn"><canvas id="minimap" width="220" height="120" aria-label="미니맵"></canvas><span id="location"></span></div><div class="quickactions"><button id="talk">대화</button><button id="heal">회복</button><button id="partyBtn">동료</button><button id="mapToggle">지도</button></div></div><div class="joyrow"><div id="joystick" aria-label="이동 조이스틱"><div id="joyKnob"></div></div><div class="questmini"><b id="miniQuest">현재 목표</b><span>조이스틱으로 이동</span></div></div><div id="fullMap" hidden><canvas id="bigmap" width="420" height="280"></canvas></div></section>
 <section class="panel battle" id="battle"><h3 id="battleTitle">전투</h3><div class="arena" id="arena"><div class="fighter" id="heroF"><div class="sprite"><span class="pixelhero" id="battleHero"><i></i></span></div><b id="heroName">유랑검객</b><div class="hp"><i id="heroBar"></i></div><small id="heroHP"></small></div><div class="fighter enemy" id="enemyF"><div class="sprite"><span class="pixelhero enemyhero" id="enemySprite"><i></i></span></div><b id="enemyName"></b><div class="hp"><i id="enemyBar"></i></div><small id="enemyHP"></small></div></div><p class="log" id="battleLog"></p><div class="actions"><button id="speed">전투 속도 ×1</button><button id="battleHeal">회복약 사용</button></div><p class="hint">전투는 자동으로 진행됩니다. 수동 조작은 추후 업데이트 예정.</p></section>
