@@ -169,7 +169,7 @@ body:has(#battle.active) .fighter .hp{width:min(20vw,115px)}
 #fieldActor .pixelhero{transform:scale(.72)!important}
 
 body:has(#battle.active) #battle .arena{display:none!important}body:has(#battle.active) #battle .hint{display:none!important}#tacticalPanel{flex:1 1 auto;min-height:0;min-width:0;display:flex;gap:8px;overflow:hidden}#tacticalBoard{height:100%;max-width:65%;aspect-ratio:1;min-height:0;min-width:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);gap:2px;margin:auto}.tcell{padding:0;border:1px solid #5d7180;border-radius:4px;background:#303c4a;color:white;font-size:clamp(8px,1.6dvh,12px);overflow:hidden}.tcell.home{background:#285258}.tcell.foe{background:#673b47}.tcell.chosen{outline:2px solid #eec36c;outline-offset:-2px}.tcell b{display:block;font-size:clamp(14px,3.8dvh,25px)}.tcell i{display:block;height:3px;background:#73c995;margin:2px 4px}#tacticalSide{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;overflow:auto;font-size:12px}#tacticChoices{display:grid;gap:4px}#tacticChoices button{padding:6px;font-size:11px}#tacticChoices button.selected{border-color:#f0ca70;background:#665339}#battleStart{background:#506b47;font-weight:bold}.tcell.fx-actor{outline:3px solid #f5d778;outline-offset:-3px}.tcell.fx-push{background:#9d6e37!important}.tcell.fx-magic{background:#4058a5!important}.tcell.fx-shadow{background:#703a86!important}.tcell.fx-shield{background:#39718d!important}.tcell.fx-stun{background:#8b802e!important}.tcell.fx-hit{background:#8b4248!important}.tcell.fx-move{box-shadow:inset 0 0 12px #9bd8b9}@media(orientation:portrait){#tacticalPanel{flex-direction:column}#tacticalBoard{width:min(100%,48dvh);height:auto;max-width:none;flex:1;min-height:0}#tacticalSide{flex:0 0 auto;max-height:26dvh}#tacticChoices{display:flex;flex-wrap:wrap}}
- .tcell{position:relative}.tcell.unit-stunned{filter:saturate(.55);outline:2px solid #f7d66c;outline-offset:-2px}.stun-mark{position:absolute;top:-7px;right:0;font-size:20px;z-index:3;animation:stunBob .45s ease-in-out infinite alternate;pointer-events:none}@keyframes stunBob{from{transform:translateY(0) rotate(-12deg)}to{transform:translateY(-5px) rotate(12deg)}}.tcell.fx-hit{animation:hitFlash .28s ease-out}.tcell.fx-magic{animation:magicFlash .45s ease-out}@keyframes hitFlash{0%{filter:brightness(2)}100%{filter:brightness(1)}}@keyframes magicFlash{0%{box-shadow:inset 0 0 25px #b9d4ff}100%{box-shadow:none}}</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.15</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
+ .tcell{position:relative}.tcell.unit-stunned{filter:saturate(.55);outline:2px solid #f7d66c;outline-offset:-2px}.stun-mark{position:absolute;top:-7px;right:0;font-size:20px;z-index:3;animation:stunBob .45s ease-in-out infinite alternate;pointer-events:none}@keyframes stunBob{from{transform:translateY(0) rotate(-12deg)}to{transform:translateY(-5px) rotate(12deg)}}.tcell.fx-hit{animation:hitFlash .28s ease-out}.tcell.fx-magic{animation:magicFlash .45s ease-out}@keyframes hitFlash{0%{filter:brightness(2)}100%{filter:brightness(1)}}@keyframes magicFlash{0%{box-shadow:inset 0 0 25px #b9d4ff}100%{box-shadow:none}}</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.16</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
 <main><section class="panel" id="statsPanel"><div class="stats"><b id="level"></b><span id="xp"></span><span id="gold"></span><span id="potions"></span><span id="quest"></span></div></section>
 <section class="panel fieldpanel" id="fieldPanel"><div class="story" id="story"></div><div id="dialogue" hidden><b id="speaker"></b><p id="dialogueText"></p><button id="dialogueNext">다음 대사 ▶</button></div><div class="field" id="field" aria-label="무림 필드"><div id="worldLayer"><canvas id="terrainCanvas" width="720" height="540"></canvas></div><div id="fieldActor"></div><div id="landscapeHud"><div id="landscapeStatus">무림 · 탐험</div><div id="floatStick"><div id="floatKnob"></div></div><button id="contextAction" hidden>대화</button><button id="landscapeMenu">☰</button></div></div><div class="hudrow"><div class="mapcolumn"><canvas id="minimap" width="220" height="120" aria-label="미니맵"></canvas><span id="location"></span></div><div class="quickactions"><button id="talk">대화</button><button id="heal">회복</button><button id="partyBtn">동료</button><button id="mapToggle">지도</button></div></div><div class="joyrow"><div id="joystick" aria-label="이동 조이스틱"><div id="joyKnob"></div></div><div class="questmini"><b id="miniQuest">현재 목표</b><span>조이스틱으로 이동</span></div></div><div id="fullMap" hidden><canvas id="bigmap" width="420" height="280"></canvas></div></section>
 <section class="panel battle" id="battle"><h3 id="battleTitle">전투</h3><div id="tacticalPanel"><div id="tacticalBoard"></div><div id="tacticalSide"><b id="tacticalStatus">전투 준비</b><div id="tacticChoices"></div><button id="battleStart">⚔️ 전투 시작</button><small>아군은 아래 3줄에 배치 · 캐릭터 선택 후 전술 지정</small></div></div><p class="log" id="battleLog"></p><div class="actions"><button id="speed">전투 속도 ×1</button><button id="battleHeal">회복약 사용</button></div><p class="hint">배치와 전술을 정한 후 자동으로 싸웁니다.</p></section>
@@ -262,18 +262,38 @@ function range(u){return u.role==="mage"?3:u.role==="assassin"?1:1;}
 function validStep(k,n){return n>=0&&n<36&&Math.abs(n%6-k%6)<=1&&Math.abs(Math.floor(n/6)-Math.floor(k/6))<=1&&n!==k;}
 function occupied(k){return combat.allies.concat(combat.enemies).some(u=>u.hp>0&&u.k===k);}
 function neighbors(k){const r=Math.floor(k/6),c=k%6;const out=[];for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const y=r+dy,x=c+dx;if(x>=0&&x<6&&y>=0&&y<6)out.push(y*6+x);}return out;}
-// Find a reachable attack position with breadth-first search, allowing detours around units.
+// Prefer straight, orthogonal approach; diagonal steps are a fallback.
 function tacticalPath(u,foes){
- const queue=[u.k],seen=new Set([u.k]),first=new Map([[u.k,u.k]]);
- for(let qi=0;qi<queue.length;qi++){
-  const k=queue[qi],here={k};
-  if(foes.some(e=>dist(here,e)<=range(u)))return k===u.k?null:first.get(k);
-  for(const n of neighbors(k)){
-   if(seen.has(n)||occupied(n))continue;
-   seen.add(n);first.set(n,k===u.k?n:first.get(k));queue.push(n);
+ const start=u.k,blocked=new Set(combat.allies.concat(combat.enemies).filter(v=>v.hp>0&&v!==u).map(v=>v.k));
+ const row=k=>Math.floor(k/6),col=k=>k%6;
+ const cardinal=k=>[k-6,k+6,k-1,k+1].filter(n=>n>=0&&n<36&&Math.abs(row(n)-row(k))+Math.abs(col(n)-col(k))===1);
+ const goals=orthogonal=>Array.from({length:36},(_,k)=>k).filter(k=>!blocked.has(k)&&foes.some(e=>{
+  const dr=Math.abs(row(k)-row(e.k)),dc=Math.abs(col(k)-col(e.k));
+  return u.role==="mage"?Math.max(dr,dc)<=range(u):orthogonal?dr+dc===1:Math.max(dr,dc)<=1;
+ }));
+ function solve(orthogonal,diagonal){
+  const targets=new Set(goals(orthogonal));
+  if(targets.has(start))return null;
+  const costs=Array(36).fill(Infinity),first=Array(36).fill(null),done=new Set();
+  costs[start]=0;
+  for(let step=0;step<36;step++){
+   let k=-1;
+   for(let j=0;j<36;j++)if(!done.has(j)&&(k<0||costs[j]<costs[k]))k=j;
+   if(k<0||!Number.isFinite(costs[k]))break;
+   if(targets.has(k))return first[k];
+   done.add(k);
+   const adjacent=diagonal?neighbors(k):cardinal(k);
+   adjacent.sort((p,q)=>Math.abs(col(p)-col(k))-Math.abs(col(q)-col(k)));
+   for(const n of adjacent){
+    if(blocked.has(n)||done.has(n))continue;
+    const diag=row(n)!==row(k)&&col(n)!==col(k);
+    const cost=costs[k]+(diag?2.5:1);
+    if(cost<costs[n]){costs[n]=cost;first[n]=k===start?n:first[k];}
+   }
   }
+  return null;
  }
- return null;
+ return solve(true,false)??solve(true,true)??solve(false,false)??solve(false,true);
 }
 function battleDraw(){
  if(!combat)return;
