@@ -190,7 +190,7 @@ body:has(#battle.active) #battle .arena{display:none!important}body:has(#battle.
 /* v0.9.25: speech is a visual overlay and never pauses the simulation */
 .tcell{position:relative}
 .tcell .battle-speech{position:absolute;z-index:6;left:50%;top:0;transform:translateX(-50%);max-width:98%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:1px 3px;border-radius:5px;background:#fff2d3;color:#30231e;border:1px solid #9b7453;font-size:clamp(7px,1.5dvh,10px);font-weight:800;line-height:1.3;pointer-events:none}
-</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.25</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
+</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.26</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
 <main><section class="panel" id="statsPanel"><div class="stats"><b id="level"></b><span id="xp"></span><span id="gold"></span><span id="potions"></span><span id="quest"></span></div></section>
 <section class="panel fieldpanel" id="fieldPanel"><div class="story" id="story"></div><div id="dialogue" hidden><b id="speaker"></b><p id="dialogueText"></p><button id="dialogueNext">다음 대사 ▶</button></div><div class="field" id="field" aria-label="무림 필드"><div id="worldLayer"><canvas id="terrainCanvas" width="720" height="540"></canvas></div><div id="fieldActor"></div><div id="landscapeHud"><div id="landscapeStatus">무림 · 탐험</div><div id="floatStick"><div id="floatKnob"></div></div><button id="contextAction" hidden>대화</button><button id="landscapeMenu">☰</button></div></div><div class="hudrow"><div class="mapcolumn"><canvas id="minimap" width="220" height="120" aria-label="미니맵"></canvas><span id="location"></span></div><div class="quickactions"><button id="talk">대화</button><button id="heal">회복</button><button id="partyBtn">동료</button><button id="mapToggle">지도</button></div></div><div class="joyrow"><div id="joystick" aria-label="이동 조이스틱"><div id="joyKnob"></div></div><div class="questmini"><b id="miniQuest">현재 목표</b><span>조이스틱으로 이동</span></div></div><div id="fullMap" hidden><canvas id="bigmap" width="420" height="280"></canvas></div></section>
 <section class="panel battle" id="battle"><h3 id="battleTitle">전투</h3><div id="tacticalPanel"><div id="tacticalBoard"></div><div id="tacticalSide"><b id="tacticalStatus">전투 준비</b><div id="tacticChoices"></div><button id="battleStart">⚔️ 전투 시작</button><small>아군은 아래 3줄에 배치 · 캐릭터 선택 후 전술 지정</small></div></div><p class="log" id="battleLog"></p><div class="actions"><button id="speed">전투 속도 ×1</button><button id="battleHeal">회복약 사용</button></div><p class="hint">배치와 전술을 정한 후 자동으로 싸웁니다.</p></section>
@@ -379,12 +379,23 @@ function battleSpeech(u,kind,duration){
 }
 function battleDraw(){
  if(!combat)return;
- const board=$("tacticalBoard");board.replaceChildren();
+ const board=$("tacticalBoard");
+ const previous=new Map();
+ if(combat.running)for(const cell of board.children){if(cell.dataset.unit){previous.set(cell.dataset.unit,{rect:cell.getBoundingClientRect(),k:Number(cell.dataset.k)});}}
+ board.replaceChildren();
  for(let k=0;k<36;k++){
   const u=combat.allies.concat(combat.enemies).find(x=>x.hp>0&&x.k===k);
   const b=document.createElement("button");b.className="tcell"+(k>=18?" home":"")+(u?.side==="enemy"?" foe":"")+(u?.id===combat.selected?" chosen":"");
-  if(u){const speech=combat.speech?.[u.id];if(combat.running&&speech&&speech.until>(combat.elapsed||0)){const bubble=document.createElement("span");bubble.className="battle-speech";bubble.textContent=speech.text;b.append(bubble);}if(u.stunTime>0){b.classList.add("unit-stunned");const st=document.createElement("span");st.className="stun-mark";st.textContent="💫";b.append(st);}if(combat.effects?.actor===u.id)b.classList.add("fx-actor");const em=document.createElement("b");if(u.id==="wanderer"){em.className="wanderer-sprite";em.dataset.motion=wandererPose(u);em.dataset.facing=combat?.running?"right":"down";em.innerHTML=wandererArt;}else em.textContent=u.icon;b.append(em);const name=document.createElement("span");name.textContent=u.name.slice(0,4);b.append(name);const hp=document.createElement("i");hp.style.width=Math.max(0,Math.round(u.hp/u.max*90))+"%";b.append(hp);}
+  if(u){b.dataset.unit=u.id;b.dataset.k=String(k);const speech=combat.speech?.[u.id];if(combat.running&&speech&&speech.until>(combat.elapsed||0)){const bubble=document.createElement("span");bubble.className="battle-speech";bubble.textContent=speech.text;b.append(bubble);}if(u.stunTime>0){b.classList.add("unit-stunned");const st=document.createElement("span");st.className="stun-mark";st.textContent="💫";b.append(st);}if(combat.effects?.actor===u.id)b.classList.add("fx-actor");const em=document.createElement("b");if(u.id==="wanderer"){em.className="wanderer-sprite";em.dataset.motion=wandererPose(u);em.dataset.facing=combat?.running?"right":"down";em.innerHTML=wandererArt;}else em.textContent=u.icon;b.append(em);const name=document.createElement("span");name.textContent=u.name.slice(0,4);b.append(name);const hp=document.createElement("i");hp.style.width=Math.max(0,Math.round(u.hp/u.max*90))+"%";b.append(hp);}
   b.onclick=()=>{if(combat.running||k<18)return;const clicked=combat.allies.find(x=>x.k===k);if(clicked)combat.selected=clicked.id;else{const chosen=combat.allies.find(x=>x.id===combat.selected);if(chosen){chosen.k=k;combat.selected=null;}}battleDraw();};board.append(b);
+ }
+ // Animate each unit's visible contents from its previous tile without moving the grid itself.
+ if(combat.running)for(const cell of board.children){
+  const before=previous.get(cell.dataset.unit);
+  if(!before||before.k===Number(cell.dataset.k))continue;
+  const after=cell.getBoundingClientRect(),dx=before.rect.left-after.left,dy=before.rect.top-after.top;
+  if(!dx&&!dy)continue;
+  for(const node of cell.children){if(node.animate)node.animate([{transform:"translate("+dx+"px,"+dy+"px)"},{transform:"translate(0,0)"}],{duration:190,easing:"ease-out"});}
  }
  const side=$("tacticChoices");side.replaceChildren();const chosen=combat.allies.find(x=>x.id===combat.selected);
  if(!combat.running&&chosen){for(const [id,name,desc] of skills[chosen.role]){const b=document.createElement("button");b.textContent=chosen.name+" · "+name+" — "+desc;b.className=chosen.skill===id?"selected":"";b.onclick=()=>{chosen.skill=id;combat.tactics[chosen.id]=id;battleDraw();};side.append(b);}}
