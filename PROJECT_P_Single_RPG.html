@@ -406,10 +406,10 @@ function encounter(m){
 }
 function bars(){stats();}
 function schedule(ms){const t=token;clearTimeout(timer);timer=setTimeout(()=>{if(t!==token)return;try{tacticalTick();}catch(err){console.error("PROJECT P tactical tick:",err);$("battleLog").textContent="전투 오류: "+err.message;combat.running=false;battleDraw();}},ms/speed);}
-// Fixed 200ms simulation steps: all units decide from the same board snapshot.
+// 100ms simulation steps: charge contact and subsequent actions advance without a 260ms visual gap.
 function tacticalTick(){
  if(mode!=="battle"||!combat?.running)return;
- const c=combat,dt=.2;
+ const c=combat,dt=.1;
  c.turn++;c.elapsed=(c.elapsed||0)+dt;
  if(c.turn>900||!c.allies.some(v=>v.hp>0)||!c.enemies.some(v=>v.hp>0)){finish(c.enemies.every(v=>v.hp<=0));return;}
  const units=c.allies.concat(c.enemies).filter(v=>v.hp>0);
@@ -438,7 +438,7 @@ function tacticalTick(){
  const reserved=new Set(units.map(v=>v.k));
  const moves=[];
  for(const u of units){
-  if(u.stunnedThisStep||u.moveClock<.52)continue;
+  if(u.stunnedThisStep||u.moveClock<.3)continue;
   const foes=(u.side==="ally"?c.enemies:c.allies).filter(v=>v.hp>0);
   if(!foes.length||foes.some(v=>dist(u,v)<=range(u)))continue;
   const next=tacticalPath(u,foes);
@@ -479,7 +479,7 @@ function tacticalTick(){
  $("battleLog").textContent=c.history.slice(-3).join(" / ")||"⚔️ 전투 진행 중 · 동시 이동";
  battleDraw();
  if(!c.enemies.some(v=>v.hp>0)||!c.allies.some(v=>v.hp>0)){schedule(400);return;}
- schedule(260);
+ schedule(100);
 }
 function beginTactical(){if(!combat||combat.running)return;combat.running=true;combat.selected=null;combat.queue=[];combat.history=[];combat.effects=null;combat.visualEffects=[];combat.speech={};combat.speechCounter=0;wandererMotion.lastK=null;wandererMotion.until=0;wandererMotion.hitUntil=0;wandererMotion.skillUntil=0;combat.elapsed=0;combat.turn=0;for(const u of combat.allies.concat(combat.enemies)){u.attackClock=0;u.moveClock=0;u.stunTime=0;u.used=false;}$("battleLog").textContent="전투 시작! 첫 행동을 준비합니다.";s.tactics={...combat.tactics};save();$("battleTitle").textContent=combat.mob.name+" · 자동전투";battleDraw();schedule(0);}
 function finish(win){clearTimeout(timer);token++;const m=combat.mob;if(win){if(m.training!==undefined){s.trainingIndex=(m.training+1)%4;note("산문 수련 승리: "+trainingNames[m.training]+" · 다음: "+trainingNames[s.trainingIndex]);tell("수련 승리! 봉인된 산문에서 다음 수련을 시작할 수 있다.");}else{if(!s.defeated.includes(m.id))s.defeated.push(m.id);const gain=15+m.id*8;posX=s.x;posY=s.y;s.xp+=gain;s.gold+=8+m.id*5;while(s.xp>=s.level*25){s.xp-=s.level*25;s.level++;s.hp=maxHp();note("레벨 "+s.level+" 달성!");}if(m.chapter===1){if(m.id===0)s.stage=Math.max(s.stage,2);else if(m.id===1)s.stage=Math.max(s.stage,3);}else if(m.id===3)s.stage=Math.max(s.stage,6);else if(m.id===4)s.stage=Math.max(s.stage,7);if(m.id===2){s.stage=4;note("제1장 완료. 장로에게 돌아가자.");tell("제1장 완료! 복제된 고수에게서 검은 문양이 발견됐다. 장로에게 보고하자.");}else if(m.id===5){s.stage=8;note("제2장 완료. 그림자 지휘관이 다른 세계의 문을 암시했다.");tell("제2장 완료! 그림자 지휘관: 이 무림은 여덟 세계 중 하나일 뿐이다…");}else tell("승리! "+m.name+"을 격파했다. 다음 단서를 찾자.");note(m.name+" 격파 · 경험치 +"+gain+" · 은전 획득.");if(m.id===3&&!s.roster.includes("shadow")){s.roster.push("shadow");note("흑의무사가 영웅 목록에 합류했다.");}if(m.id===4&&!s.roster.includes("sage")){s.roster.push("sage");note("백운도사가 영웅 목록에 합류했다.");}}}
