@@ -168,8 +168,8 @@ body:has(#battle.active) .fighter .hp{width:min(20vw,115px)}
 .pixelhero .sword{display:none}
 #fieldActor .pixelhero{transform:scale(.72)!important}
 
-body:has(#battle.active) #battle .arena{display:none!important}body:has(#battle.active) #battle .hint{display:none!important}#tacticalPanel{flex:1 1 auto;min-height:0;min-width:0;display:flex;gap:8px;overflow:hidden}#tacticalBoard{height:100%;max-width:65%;aspect-ratio:1;min-height:0;min-width:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);gap:2px;margin:auto}.tcell{padding:0;border:1px solid #5d7180;border-radius:4px;background:#303c4a;color:white;font-size:clamp(8px,1.6dvh,12px);overflow:hidden}.tcell.home{background:#285258}.tcell.foe{background:#673b47}.tcell.chosen{outline:2px solid #eec36c;outline-offset:-2px}.tcell b{display:block;font-size:clamp(14px,3.8dvh,25px)}.tcell i{display:block;height:3px;background:#73c995;margin:2px 4px}#tacticalSide{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;overflow:auto;font-size:12px}#tacticChoices{display:grid;gap:4px}#tacticChoices button{padding:6px;font-size:11px}#tacticChoices button.selected{border-color:#f0ca70;background:#665339}#battleStart{background:#506b47;font-weight:bold}@media(orientation:portrait){#tacticalPanel{flex-direction:column}#tacticalBoard{width:min(100%,48dvh);height:auto;max-width:none;flex:1;min-height:0}#tacticalSide{flex:0 0 auto;max-height:26dvh}#tacticChoices{display:flex;flex-wrap:wrap}}
-</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.7</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
+body:has(#battle.active) #battle .arena{display:none!important}body:has(#battle.active) #battle .hint{display:none!important}#tacticalPanel{flex:1 1 auto;min-height:0;min-width:0;display:flex;gap:8px;overflow:hidden}#tacticalBoard{height:100%;max-width:65%;aspect-ratio:1;min-height:0;min-width:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);gap:2px;margin:auto}.tcell{padding:0;border:1px solid #5d7180;border-radius:4px;background:#303c4a;color:white;font-size:clamp(8px,1.6dvh,12px);overflow:hidden}.tcell.home{background:#285258}.tcell.foe{background:#673b47}.tcell.chosen{outline:2px solid #eec36c;outline-offset:-2px}.tcell b{display:block;font-size:clamp(14px,3.8dvh,25px)}.tcell i{display:block;height:3px;background:#73c995;margin:2px 4px}#tacticalSide{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;overflow:auto;font-size:12px}#tacticChoices{display:grid;gap:4px}#tacticChoices button{padding:6px;font-size:11px}#tacticChoices button.selected{border-color:#f0ca70;background:#665339}#battleStart{background:#506b47;font-weight:bold}.tcell.fx-actor{outline:3px solid #f5d778;outline-offset:-3px}.tcell.fx-push{background:#9d6e37!important}.tcell.fx-magic{background:#4058a5!important}.tcell.fx-shadow{background:#703a86!important}.tcell.fx-shield{background:#39718d!important}.tcell.fx-stun{background:#8b802e!important}.tcell.fx-hit{background:#8b4248!important}.tcell.fx-move{box-shadow:inset 0 0 12px #9bd8b9}@media(orientation:portrait){#tacticalPanel{flex-direction:column}#tacticalBoard{width:min(100%,48dvh);height:auto;max-width:none;flex:1;min-height:0}#tacticalSide{flex:0 0 auto;max-height:26dvh}#tacticChoices{display:flex;flex-wrap:wrap}}
+</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.8</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
 <main><section class="panel" id="statsPanel"><div class="stats"><b id="level"></b><span id="xp"></span><span id="gold"></span><span id="potions"></span><span id="quest"></span></div></section>
 <section class="panel fieldpanel" id="fieldPanel"><div class="story" id="story"></div><div id="dialogue" hidden><b id="speaker"></b><p id="dialogueText"></p><button id="dialogueNext">다음 대사 ▶</button></div><div class="field" id="field" aria-label="무림 필드"><div id="worldLayer"><canvas id="terrainCanvas" width="720" height="540"></canvas></div><div id="fieldActor"></div><div id="landscapeHud"><div id="landscapeStatus">무림 · 탐험</div><div id="floatStick"><div id="floatKnob"></div></div><button id="contextAction" hidden>대화</button><button id="landscapeMenu">☰</button></div></div><div class="hudrow"><div class="mapcolumn"><canvas id="minimap" width="220" height="120" aria-label="미니맵"></canvas><span id="location"></span></div><div class="quickactions"><button id="talk">대화</button><button id="heal">회복</button><button id="partyBtn">동료</button><button id="mapToggle">지도</button></div></div><div class="joyrow"><div id="joystick" aria-label="이동 조이스틱"><div id="joyKnob"></div></div><div class="questmini"><b id="miniQuest">현재 목표</b><span>조이스틱으로 이동</span></div></div><div id="fullMap" hidden><canvas id="bigmap" width="420" height="280"></canvas></div></section>
 <section class="panel battle" id="battle"><h3 id="battleTitle">전투</h3><div id="tacticalPanel"><div id="tacticalBoard"></div><div id="tacticalSide"><b id="tacticalStatus">전투 준비</b><div id="tacticChoices"></div><button id="battleStart">⚔️ 전투 시작</button><small>아군은 아래 3줄에 배치 · 캐릭터 선택 후 전술 지정</small></div></div><p class="log" id="battleLog"></p><div class="actions"><button id="speed">전투 속도 ×1</button><button id="battleHeal">회복약 사용</button></div><p class="hint">배치와 전술을 정한 후 자동으로 싸웁니다.</p></section>
@@ -248,7 +248,7 @@ function interact(p){if(p===npc){if(s.stage===0){startDialogue([["마을 장로"
 else if(s.stage===4){startDialogue([["유랑검객","장로님, 마교 무사인 줄 알았던 자는 누군가가 만들어 낸 복제 인간이었습니다."],["마을 장로","그렇다면 정파와 마교를 싸우게 한 것도 누군가의 계략이겠군."],["유랑검객","쓰러진 고수의 몸에서 검은 문양을 발견했습니다."],["마을 장로","그 문양은 북쪽 폐사원에서도 발견됐네. 청운검사를 찾아가게."],["장면 전환 · 제2장","가면 뒤의 검 — 영웅의 얼굴을 훔친 자들을 추적한다."]],()=>{s.stage=5;s.chapter=2;note("제2장 개막: 북쪽 폐사원과 복제 영웅의 배후를 추적한다.");tell("제2장 · 가면 뒤의 검: 청운검사에게 말을 걸고 북쪽의 검은 전령을 추적하자.");});}
 else startDialogue([["마을 장로",s.stage>=8?"그림자 지휘관은 쓰러졌지만, 여덟 세계를 노리는 자의 정체는 아직 밝혀지지 않았네.":"마교와 정파의 싸움 뒤에 숨어 있는 자를 찾아주게."]]);}
 else if(p===secondNpc){if(s.stage>=4){startDialogue([["청운검사","나와 똑같은 얼굴을 한 검객이 사람들을 해치고 있소."],["청운검사","진짜와 가짜를 가려야 하오. 함께 북쪽으로 가겠소."]],()=>{if(!s.roster.includes("blade")){s.roster.push("blade");if(s.party.length<4)s.party.push("blade");note("청운검사가 동료로 합류했다.");}tell("청운검사가 동료로 합류했다. 동료/편성에서 대표 영웅을 바꿀 수 있다.");});}else tell("아직 이곳에 아무도 없다.");}
-else if(p===gate){if(s.stage>=8&&!s.trioJoined){startDialogue([["봉인된 산문","산문 너머에서 낯선 기운이 새어 나온다. 혼자서는 이 문을 지킬 수 없다."],["청운검사","가짜 검객을 쫓으며 깨달았소. 이 싸움은 한 사람의 검으로 끝나지 않겠군."],["백운도사","나는 술법으로 후방을 지키겠소. 진형을 나누어 싸우면 길이 열릴 것이오."],["유랑검객","좋소. 셋이 힘을 합쳐 산문을 지킵시다."],["봉인된 산문","세 영웅이 모였다. 새로운 전술 전투가 시작된다."]],()=>{for(const id of ["blade","sage","shadow"])if(!s.roster.includes(id))s.roster.push(id);s.party=["wanderer","blade","sage"];s.trioJoined=true;note("산문 앞의 맹약: 청운검사와 백운도사가 정식 출전. 흑의무사도 편성 가능.");tell("3인 파티 결성! 동료/편성에서 출전 영웅을 바꿀 수 있다.");});}else if(s.stage>=8&&s.trioJoined){const index=(s.trainingIndex||0)%4;startDialogue([["봉인된 산문","산문의 잔영이 전투를 재현한다. "+trainingNames[index]+" — 배치와 전술을 점검하라."],["백운도사","잔영은 반복해서 도전할 수 있소. 패배해도 스토리 진행은 유지되오."]],()=>encounter(trainingMob(index)));}else startDialogue([["봉인된 산문","문이 봉인되어 있다. 무림의 사건을 해결해야 한다."]]);}}
+else if(p===gate){if(s.stage>=8&&!s.trioJoined){startDialogue([["봉인된 산문","산문 너머에서 낯선 기운이 새어 나온다. 혼자서는 이 문을 지킬 수 없다."],["청운검사","가짜 검객을 쫓으며 깨달았소. 이 싸움은 한 사람의 검으로 끝나지 않겠군."],["백운도사","나는 술법으로 후방을 지키겠소. 진형을 나누어 싸우면 길이 열릴 것이오."],["유랑검객","좋소. 셋이 힘을 합쳐 산문을 지킵시다."],["흑의무사","그림자 속에서 후방을 노리겠소. 나도 함께하지."],["봉인된 산문","네 영웅이 모였다. 새로운 전술 전투가 시작된다."]],()=>{for(const id of ["blade","sage","shadow"])if(!s.roster.includes(id))s.roster.push(id);s.party=["wanderer","blade","sage","shadow"];s.trioJoined=true;note("산문 앞의 맹약: 청운검사와 백운도사가 정식 출전. 흑의무사도 편성 가능.");tell("3인 파티 결성! 동료/편성에서 출전 영웅을 바꿀 수 있다.");});}else if(s.stage>=8&&s.trioJoined){const index=(s.trainingIndex||0)%4;startDialogue([["봉인된 산문","산문의 잔영이 전투를 재현한다. "+trainingNames[index]+" — 배치와 전술을 점검하라."],["백운도사","잔영은 반복해서 도전할 수 있소. 패배해도 스토리 진행은 유지되오."]],()=>encounter(trainingMob(index)));}else startDialogue([["봉인된 산문","문이 봉인되어 있다. 무림의 사건을 해결해야 한다."]]);}}
 function potion(){if(s.potions<1){tell("회복약이 없다.");return false;}if(s.hp>=maxHp()){tell("체력이 가득하다.");return false;}s.potions--;s.hp=Math.min(maxHp(),s.hp+35);save();stats();tell("회복약을 사용했다. HP +35");return true;}
 
 const trainingNames=["기초 3대3","버티기 방진","후방 술사","산문 수호전"];
@@ -280,7 +280,7 @@ function battleDraw(){
  for(let k=0;k<36;k++){
   const u=combat.allies.concat(combat.enemies).find(x=>x.hp>0&&x.k===k);
   const b=document.createElement("button");b.className="tcell"+(k>=18?" home":"")+(u?.side==="enemy"?" foe":"")+(u?.id===combat.selected?" chosen":"");
-  if(u){const em=document.createElement("b");em.textContent=u.icon;b.append(em);const name=document.createElement("span");name.textContent=u.name.slice(0,4);b.append(name);const hp=document.createElement("i");hp.style.width=Math.max(0,Math.round(u.hp/u.max*90))+"%";b.append(hp);}
+  if(combat.effects?.cells?.includes(k))b.classList.add("fx-"+combat.effects.type);if(u){if(combat.effects?.actor===u.id)b.classList.add("fx-actor");const em=document.createElement("b");em.textContent=u.icon;b.append(em);const name=document.createElement("span");name.textContent=u.name.slice(0,4);b.append(name);const hp=document.createElement("i");hp.style.width=Math.max(0,Math.round(u.hp/u.max*90))+"%";b.append(hp);}
   b.onclick=()=>{if(combat.running||k<18)return;const clicked=combat.allies.find(x=>x.k===k);if(clicked)combat.selected=clicked.id;else{const chosen=combat.allies.find(x=>x.id===combat.selected);if(chosen){chosen.k=k;combat.selected=null;}}battleDraw();};board.append(b);
  }
  const side=$("tacticChoices");side.replaceChildren();const chosen=combat.allies.find(x=>x.id===combat.selected);
@@ -296,36 +296,61 @@ function encounter(m){
  const cells=[26,27,32,33,25,28,31,34,30];
  const allies=ids.map((id,i)=>{const h=heroes.find(v=>v.id===id)||heroes[0],role=roles[h.id]||"fighter",max=Math.round(maxHp()*(role==="tank"?1.25:role==="mage"?.8:1));return{id:h.id,name:h.name,icon:icons[h.id],role,side:"ally",k:cells[i],max,hp:max,atk:12+s.level*3,skill:s.tactics?.[h.id]||skills[role][0][0],stun:0,used:false};});
  // Early story fights are solo-capable; escorts scale with deployed party size.
- const count=m.training!==undefined?3:Math.min(6,Math.max(1,Math.min(1+Math.floor(m.id/2),allies.length+(m.id>=4?1:0)))),cellsE=[8,9,7,10,2,3];
- const enemies=Array.from({length:count},(_,i)=>({id:"enemy"+i,name:m.training!==undefined?["수련 전위","수련 방패","수련 술사"][i]:(i?"호위병":m.name),icon:i?"👹":"👺",role:m.training===2&&i===2?"mage":i%3===1?"tank":"fighter",side:"enemy",k:cellsE[i],max:Math.round(m.hp*(i?.42:.82)),hp:Math.round(m.hp*(i?.42:.82)),atk:Math.max(3,Math.round(m.atk*.72)-(i?2:0)),skill:(m.training===1&&i===1)?"brace":(m.training===2&&i===2)?"single":i%3===1?"brace":"charge",stun:0,used:false}));
- combat={mob:m,allies,enemies,selected:allies[0].id,turn:0,running:false,tactics:{...(s.tactics||{})}};
+ const count=m.training!==undefined?(m.training===3?4:3):Math.min(6,Math.max(1,Math.min(1+Math.floor(m.id/2),allies.length+(m.id>=4?1:0)))),cellsE=[8,9,7,10,2,3];
+ const enemies=Array.from({length:count},(_,i)=>({id:"enemy"+i,name:m.training!==undefined?["수련 전위","수련 방패","수련 술사","산문 대장"][i]:(i?"호위병":m.name),icon:i?"👹":"👺",role:m.training===2&&i===2?"mage":m.training===3&&i===3?"tank":i%3===1?"tank":"fighter",side:"enemy",k:m.training===1?[13,7,1][i]:m.training===2?[13,7,2][i]:m.training===3?[13,7,2,8][i]:cellsE[i],max:Math.round(m.hp*(i?.42:.82)),hp:Math.round(m.hp*(i?.42:.82)),atk:Math.max(3,Math.round(m.atk*.72)-(i?2:0)),skill:(m.training===1&&i===1)?"brace":(m.training===2&&i===2)?"area":i%3===1?"brace":"charge",stun:0,used:false}));
+ combat={mob:m,allies,enemies,selected:allies[0].id,turn:0,running:false,tactics:{...(s.tactics||{})},queue:[],effects:null,history:[]};
  $("fieldPanel").style.display="none";$("battle").classList.add("active");$("battleTitle").textContent=m.name+" · 전투 준비";$("battleLog").textContent="아군을 배치하고 전술을 선택하세요.";battleDraw();
 }
 function bars(){stats();}
 function schedule(ms){const t=token;clearTimeout(timer);timer=setTimeout(()=>{if(t!==token)return;try{tacticalTick();}catch(err){console.error("PROJECT P tactical tick:",err);$("battleLog").textContent="전투 오류: "+err.message;combat.running=false;battleDraw();}},ms/speed);}
 function tacticalTick(){
- if(mode!=="battle"||!combat?.running)return;const c=combat;c.turn++;const events=[];
- for(const u of c.allies.concat(c.enemies).filter(x=>x.hp>0)){
-  if(u.hp<=0)continue;if(u.stun){u.stun--;events.push(u.name+" 기절");continue;}
-  const foes=(u.side==="ally"?c.enemies:c.allies).filter(x=>x.hp>0);if(!foes.length)break;
-  let target=foes.slice().sort((a,b)=>dist(u,a)-dist(u,b)||a.hp-b.hp)[0],boost=1,crit=false;
-  if(u.skill==="execute"){const low=foes.filter(x=>x.hp/x.max<=.25);if(low.length){target=low[0];const dest=neighbors(target.k).find(k=>!occupied(k));if(dest!==undefined)u.k=dest;boost=1.6;crit=true;}}
-  if(u.skill==="stealth"&&!u.used){target=foes.slice().sort((a,b)=>a.k-b.k)[0];const dest=neighbors(target.k).find(k=>!occupied(k));if(dest!==undefined)u.k=dest;boost=1.5;crit=true;u.used=true;}
-  if(dist(u,target)>range(u)){const next=tacticalPath(u,foes);if(next!==null)u.k=next;const reachable=foes.filter(e=>dist(u,e)<=range(u));if(!reachable.length){events.push(u.name+(next===null?" 대기(진로 차단)":" 이동"));continue;}target=reachable.sort((a,b)=>a.hp-b.hp)[0];}
-  if(u.skill==="charge"&&!u.used){boost=1.35;u.used=true;}
-  if(u.skill==="single"&&Math.random()<.2){boost=1.5;crit=true;}
-  if(u.skill==="area"){const group=foes.filter(x=>Math.abs(x.k%6-target.k%6)<=1&&Math.abs(Math.floor(x.k/6)-Math.floor(target.k/6))<=1);if(group.length>=3){group.forEach(x=>x.hp=Math.max(0,x.hp-Math.max(1,Math.round(u.atk*.75))));events.push(u.name+" 광역 마법");continue;}}
-  if(u.skill==="push"&&target.skill==="brace"){u.stun=1;events.push(target.name+" 버티기 반격");continue;}
-  if(u.skill==="push"){const dx=Math.sign(target.k%6-u.k%6),dy=Math.sign(Math.floor(target.k/6)-Math.floor(u.k/6));const x=target.k%6+dx,y=Math.floor(target.k/6)+dy;if(x>=0&&x<6&&y>=0&&y<6&&!occupied(y*6+x))target.k=y*6+x;else target.stun=1;}
-  let dmg=Math.max(1,Math.round(u.atk*boost)+Math.floor(Math.random()*5)-2);if(target.skill==="brace")dmg=Math.max(1,Math.round(dmg*.78));
-  if(target.side==="ally"&&c.allies.some(x=>x!==target&&x.hp>0&&x.skill==="guard"&&dist(x,target)<=1))dmg=Math.max(1,Math.round(dmg*.8));
-  target.hp=Math.max(0,target.hp-dmg);events.push(u.name+" → "+target.name+" -"+dmg+(crit?" 치명타":""));
+ if(mode!=="battle"||!combat?.running)return;
+ const c=combat;
+ if(!c.queue.length){
+  if(!c.allies.some(v=>v.hp>0)||!c.enemies.some(v=>v.hp>0)||c.turn>=90){finish(c.enemies.every(v=>v.hp<=0));return;}
+  c.turn++;c.queue=c.allies.concat(c.enemies).filter(v=>v.hp>0);
  }
- $("battleLog").textContent=events.slice(-3).join(" · ")||"전투 진행";battleDraw();
- if(!c.enemies.some(x=>x.hp>0)||!c.allies.some(x=>x.hp>0)||c.turn>=90){const win=c.enemies.every(x=>x.hp<=0);setTimeout(()=>{if(mode==="battle"&&combat===c)finish(win);},350/speed);return;}
- schedule(650);
+ const u=c.queue.shift();if(!u||u.hp<=0){schedule(60);return;}
+ const foes=(u.side==="ally"?c.enemies:c.allies).filter(v=>v.hp>0);
+ if(!foes.length){c.queue=[];schedule(60);return;}
+ let target=foes.slice().sort((a,b)=>dist(u,a)-dist(u,b)||a.hp-b.hp)[0],msg="",fx="hit",cells=[u.k],boost=1,crit=false,skillUsed="";
+ if(u.stun){u.stun--;msg=u.name+" 🌀 기절로 행동 불가";fx="stun";}
+ else{
+  if(u.skill==="execute"){const low=foes.filter(v=>v.hp/v.max<=.25);if(low.length){target=low.sort((a,b)=>a.hp-b.hp)[0];const dest=neighbors(target.k).find(k=>!occupied(k));if(dest!==undefined)u.k=dest;boost=1.65;crit=true;fx="shadow";skillUsed="암살";}}
+  if(u.skill==="stealth"&&!u.used){target=foes.slice().sort((a,b)=>a.k-b.k)[0];const dest=neighbors(target.k).find(k=>!occupied(k));if(dest!==undefined)u.k=dest;boost=1.5;crit=true;fx="shadow";skillUsed="은신 기습";u.used=true;}
+  if(dist(u,target)>range(u)){
+   const next=tacticalPath(u,foes);if(next!==null)u.k=next;
+   const nearby=foes.filter(v=>dist(u,v)<=range(u));
+   if(!nearby.length){msg=u.name+(next===null?" 🚧 진로 차단":" ➜ 이동");fx="move";cells=[u.k];}
+   else target=nearby.sort((a,b)=>a.hp-b.hp)[0];
+  }
+  if(!msg){
+   cells=[u.k,target.k];
+   if(u.skill==="charge"&&!u.used){boost=1.35;u.used=true;skillUsed="돌파";}
+   if(u.skill==="single"&&Math.random()<.2){boost=1.5;crit=true;}
+   if(u.role==="mage"){fx="magic";skillUsed=skillUsed||"마법";}
+   if(u.skill==="area"){
+    const group=foes.filter(v=>Math.abs(v.k%6-target.k%6)<=1&&Math.abs(Math.floor(v.k/6)-Math.floor(target.k/6))<=1);
+    if(group.length>=3){group.forEach(v=>v.hp=Math.max(0,v.hp-Math.max(1,Math.round(u.atk*.75))));cells=[u.k,...group.map(v=>v.k)];fx="magic";msg=u.name+" ✨ [광역 마법] "+group.length+"명 공격";}
+   }
+   if(!msg&&u.skill==="push"&&target.skill==="brace"){u.stun=1;fx="shield";msg=target.name+" 🛡️ [버티기] 밀어내기 반격!";}
+   if(!msg){
+    let extra="";
+    if(u.skill==="push"){const dx=Math.sign(target.k%6-u.k%6),dy=Math.sign(Math.floor(target.k/6)-Math.floor(u.k/6));const x=target.k%6+dx,y=Math.floor(target.k/6)+dy;if(x>=0&&x<6&&y>=0&&y<6&&!occupied(y*6+x)){target.k=y*6+x;extra=" → 1칸 밀림";cells.push(target.k);}else{target.stun=1;extra=" → 충돌 기절";}fx="push";skillUsed="밀어내기";}
+    let dmg=Math.max(1,Math.round(u.atk*boost)+Math.floor(Math.random()*5)-2);
+    if(target.skill==="brace")dmg=Math.max(1,Math.round(dmg*.78));
+    if(target.side==="ally"&&c.allies.some(v=>v!==target&&v.hp>0&&v.skill==="guard"&&dist(v,target)<=1))dmg=Math.max(1,Math.round(dmg*.8));
+    target.hp=Math.max(0,target.hp-dmg);
+    msg=u.name+" "+(skillUsed?"["+skillUsed+"] ":"")+(fx==="magic"?"🔮":fx==="shadow"?"🌑":"⚔️")+" "+target.name+" -"+dmg+(crit?" 치명타":"")+extra;
+   }
+  }
+ }
+ c.effects={actor:u.id,type:fx,cells};c.history.push(msg);if(c.history.length>8)c.history.shift();
+ $("battleLog").textContent=c.history.slice(-3).join(" / ");battleDraw();
+ if(!c.enemies.some(v=>v.hp>0)||!c.allies.some(v=>v.hp>0)){c.queue=[];schedule(400);return;}
+ schedule(600);
 }
-function beginTactical(){if(!combat||combat.running)return;combat.running=true;combat.selected=null;$("battleLog").textContent="전투 시작! 첫 행동을 준비합니다.";s.tactics={...combat.tactics};save();$("battleTitle").textContent=combat.mob.name+" · 자동전투";battleDraw();schedule(400);}
+function beginTactical(){if(!combat||combat.running)return;combat.running=true;combat.selected=null;combat.queue=[];combat.history=[];combat.effects=null;$("battleLog").textContent="전투 시작! 첫 행동을 준비합니다.";s.tactics={...combat.tactics};save();$("battleTitle").textContent=combat.mob.name+" · 자동전투";battleDraw();schedule(400);}
 function finish(win){clearTimeout(timer);token++;const m=combat.mob;if(win){if(m.training!==undefined){s.trainingIndex=(m.training+1)%4;note("산문 수련 승리: "+trainingNames[m.training]+" · 다음: "+trainingNames[s.trainingIndex]);tell("수련 승리! 봉인된 산문에서 다음 수련을 시작할 수 있다.");}else{if(!s.defeated.includes(m.id))s.defeated.push(m.id);const gain=15+m.id*8;posX=s.x;posY=s.y;s.xp+=gain;s.gold+=8+m.id*5;while(s.xp>=s.level*25){s.xp-=s.level*25;s.level++;s.hp=maxHp();note("레벨 "+s.level+" 달성!");}if(m.chapter===1){if(m.id===0)s.stage=Math.max(s.stage,2);else if(m.id===1)s.stage=Math.max(s.stage,3);}else if(m.id===3)s.stage=Math.max(s.stage,6);else if(m.id===4)s.stage=Math.max(s.stage,7);if(m.id===2){s.stage=4;note("제1장 완료. 장로에게 돌아가자.");tell("제1장 완료! 복제된 고수에게서 검은 문양이 발견됐다. 장로에게 보고하자.");}else if(m.id===5){s.stage=8;note("제2장 완료. 그림자 지휘관이 다른 세계의 문을 암시했다.");tell("제2장 완료! 그림자 지휘관: 이 무림은 여덟 세계 중 하나일 뿐이다…");}else tell("승리! "+m.name+"을 격파했다. 다음 단서를 찾자.");note(m.name+" 격파 · 경험치 +"+gain+" · 은전 획득.");if(m.id===3&&!s.roster.includes("shadow")){s.roster.push("shadow");note("흑의무사가 영웅 목록에 합류했다.");}if(m.id===4&&!s.roster.includes("sage")){s.roster.push("sage");note("백운도사가 영웅 목록에 합류했다.");}}}
 else{if(m.training!==undefined){tell("수련 패배. 산문에서 같은 수련에 다시 도전할 수 있다.");note("산문 수련 패배: "+trainingNames[m.training]);}else{s.hp=maxHp();s.x=3;s.y=15;posX=s.x;posY=s.y;s.gold=Math.max(0,s.gold-5);note("전투 패배. 마을로 돌아왔다.");tell("전투에서 패배했다. 체력을 회복하고 마을에서 다시 시작한다.");}}combat=null;posX=s.x;posY=s.y;mode="field";$("battle").classList.remove("active");$("fieldPanel").style.display="block";draw();}
 function partyDraw(){const p=$("partyList");p.replaceChildren();for(const id of s.roster){const h=heroes.find(x=>x.id===id);if(!h)continue;const row=document.createElement("div");row.className="member";const name=document.createElement("span");name.textContent=h.name+(s.leader===id?" ★대표":"")+(s.party.includes(id)?" · 출전":"");row.append(name);const actions=document.createElement("span");const lead=document.createElement("button");lead.textContent="대표";lead.onclick=()=>{s.leader=id;if(!s.party.includes(id)){if(s.party.length>=Math.min(9,4+Math.max(0,s.stage-4)))s.party.pop();s.party.push(id);}save();partyDraw();draw();};actions.append(lead);const join=document.createElement("button");join.textContent=s.party.includes(id)?"제외":"편성";join.disabled=s.leader===id&&s.party.includes(id);join.onclick=()=>{if(s.party.includes(id))s.party=s.party.filter(x=>x!==id);else if(s.party.length<Math.min(9,4+Math.max(0,s.stage-4)))s.party.push(id);else{tell("현재 출전 인원이 가득 찼다.");return;}save();partyDraw();draw();};actions.append(join);row.append(actions);p.append(row);}}
