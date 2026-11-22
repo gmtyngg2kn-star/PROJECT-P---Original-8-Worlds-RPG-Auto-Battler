@@ -170,22 +170,10 @@ body:has(#battle.active) .fighter .hp{width:min(20vw,115px)}
 
 body:has(#battle.active) #battle .arena{display:none!important}body:has(#battle.active) #battle .hint{display:none!important}#tacticalPanel{flex:1 1 auto;min-height:0;min-width:0;display:flex;gap:8px;overflow:hidden}#tacticalBoard{height:100%;max-width:65%;aspect-ratio:1;min-height:0;min-width:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);gap:2px;margin:auto}.tcell{padding:0;border:1px solid #5d7180;border-radius:4px;background:#303c4a;color:white;font-size:clamp(8px,1.6dvh,12px);overflow:hidden}.tcell.home{background:#285258}.tcell.foe{background:#673b47}.tcell.chosen{outline:2px solid #eec36c;outline-offset:-2px}.tcell b{display:block;font-size:clamp(14px,3.8dvh,25px)}.tcell i{display:block;height:3px;background:#73c995;margin:2px 4px}#tacticalSide{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;overflow:auto;font-size:12px}#tacticChoices{display:grid;gap:4px}#tacticChoices button{padding:6px;font-size:11px}#tacticChoices button.selected{border-color:#f0ca70;background:#665339}#battleStart{background:#506b47;font-weight:bold}.tcell.fx-actor{outline:3px solid #f5d778;outline-offset:-3px}.tcell.fx-push{background:#9d6e37!important}.tcell.fx-magic{background:#4058a5!important}.tcell.fx-shadow{background:#703a86!important}.tcell.fx-shield{background:#39718d!important}.tcell.fx-stun{background:#8b802e!important}.tcell.fx-hit{background:#8b4248!important}.tcell.fx-move{box-shadow:inset 0 0 12px #9bd8b9}@media(orientation:portrait){#tacticalPanel{flex-direction:column}#tacticalBoard{width:min(100%,48dvh);height:auto;max-width:none;flex:1;min-height:0}#tacticalSide{flex:0 0 auto;max-height:26dvh}#tacticChoices{display:flex;flex-wrap:wrap}}
  .tcell{position:relative}.tcell.unit-stunned{filter:saturate(.55);outline:2px solid #f7d66c;outline-offset:-2px}.stun-mark{position:absolute;top:-7px;right:0;font-size:20px;z-index:3;animation:stunBob .45s ease-in-out infinite alternate;pointer-events:none}@keyframes stunBob{from{transform:translateY(0) rotate(-12deg)}to{transform:translateY(-5px) rotate(12deg)}}.tcell.fx-hit{animation:hitFlash .28s ease-out}.tcell.fx-magic{animation:magicFlash .45s ease-out}@keyframes hitFlash{0%{filter:brightness(2)}100%{filter:brightness(1)}}@keyframes magicFlash{0%{box-shadow:inset 0 0 25px #b9d4ff}100%{box-shadow:none}}.tcell .wanderer-sprite{display:flex;justify-content:center;align-items:center;height:clamp(28px,5.2dvh,48px);line-height:1}.wanderer-sprite svg{height:100%;width:auto;max-width:95%;image-rendering:pixelated;filter:drop-shadow(1px 2px 1px #101820)}.field-wanderer-sprite{width:100%;height:100%;display:flex;align-items:center;justify-content:center}.field-wanderer-sprite svg{height:100%;width:100%;overflow:visible;image-rendering:pixelated;filter:drop-shadow(0 2px 1px #161b1d)}.tcell .wanderer-sprite svg{height:100%;width:auto;image-rendering:pixelated}
-/* v0.9.20: independent footfall animation, no floating/whole-body bob */
-.field-wanderer-sprite{transform-origin:50% 100%}
-.wanderer-rig{overflow:visible}
-.wanderer-leg{transform-box:fill-box;transform-origin:50% 10%;transform:translateY(0)}
-#fieldActor.walking .leg-front{animation:wandererStepFront .44s steps(2,end) infinite}
-#fieldActor.walking .leg-back{animation:wandererStepBack .44s steps(2,end) infinite}
-#fieldActor.walking .wanderer-upper{animation:wandererCloth .44s steps(2,end) infinite}
-#fieldActor[data-facing="left"] .field-wanderer-sprite{transform:scaleX(-1)}
-#fieldActor[data-facing="up"] .wanderer-upper{opacity:0}
-#fieldActor[data-facing="up"] .wanderer-back-detail{opacity:1}
-#fieldActor:not([data-facing="up"]) .wanderer-back-detail{opacity:0}
-#fieldActor[data-facing="right"] .field-wanderer-sprite{transform:none}
-#fieldActor[data-facing="down"] .field-wanderer-sprite{transform:none}
-@keyframes wandererStepFront{0%,100%{transform:translate(-1px,0)}50%{transform:translate(2px,-1px)}}
-@keyframes wandererStepBack{0%,100%{transform:translate(2px,-1px)}50%{transform:translate(-1px,0)}}
-@keyframes wandererCloth{0%,100%{transform:translateX(0)}50%{transform:translateX(1px)}}
+/* v0.9.21: four discrete grounded sprite frames for each cardinal facing */
+.field-wanderer-sprite{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.field-wanderer-sprite svg{width:100%;height:100%;image-rendering:pixelated;overflow:visible;filter:drop-shadow(0 1px 0 #182026)}
+.field-wanderer-sprite .wanderer-ground{opacity:.35}
 .wanderer-sprite{position:relative;overflow:visible}
 .wanderer-sprite[data-motion="walk"] svg{animation:wandererWalk .32s ease-in-out infinite alternate}
 .wanderer-sprite[data-motion="attack"] svg{animation:wandererSlash .38s ease-out}
@@ -199,7 +187,7 @@ body:has(#battle.active) #battle .arena{display:none!important}body:has(#battle.
 @keyframes wandererHurt{0%{filter:brightness(2);transform:translateX(-4px)}60%{filter:brightness(.7);transform:translateX(2px)}100%{filter:none;transform:none}}
 @keyframes wandererSkill{0%{filter:brightness(1.8) drop-shadow(0 0 6px #8ae2ff);transform:scale(.92)}60%{transform:translateX(5px) scale(1.1)}100%{filter:none;transform:none}}
 @keyframes slashArc{0%{opacity:0;transform:rotate(-75deg) scale(.6)}45%{opacity:1}100%{opacity:0;transform:rotate(40deg) scale(1.2)}}
-</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.20</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
+</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.21</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
 <main><section class="panel" id="statsPanel"><div class="stats"><b id="level"></b><span id="xp"></span><span id="gold"></span><span id="potions"></span><span id="quest"></span></div></section>
 <section class="panel fieldpanel" id="fieldPanel"><div class="story" id="story"></div><div id="dialogue" hidden><b id="speaker"></b><p id="dialogueText"></p><button id="dialogueNext">다음 대사 ▶</button></div><div class="field" id="field" aria-label="무림 필드"><div id="worldLayer"><canvas id="terrainCanvas" width="720" height="540"></canvas></div><div id="fieldActor"></div><div id="landscapeHud"><div id="landscapeStatus">무림 · 탐험</div><div id="floatStick"><div id="floatKnob"></div></div><button id="contextAction" hidden>대화</button><button id="landscapeMenu">☰</button></div></div><div class="hudrow"><div class="mapcolumn"><canvas id="minimap" width="220" height="120" aria-label="미니맵"></canvas><span id="location"></span></div><div class="quickactions"><button id="talk">대화</button><button id="heal">회복</button><button id="partyBtn">동료</button><button id="mapToggle">지도</button></div></div><div class="joyrow"><div id="joystick" aria-label="이동 조이스틱"><div id="joyKnob"></div></div><div class="questmini"><b id="miniQuest">현재 목표</b><span>조이스틱으로 이동</span></div></div><div id="fullMap" hidden><canvas id="bigmap" width="420" height="280"></canvas></div></section>
 <section class="panel battle" id="battle"><h3 id="battleTitle">전투</h3><div id="tacticalPanel"><div id="tacticalBoard"></div><div id="tacticalSide"><b id="tacticalStatus">전투 준비</b><div id="tacticChoices"></div><button id="battleStart">⚔️ 전투 시작</button><small>아군은 아래 3줄에 배치 · 캐릭터 선택 후 전술 지정</small></div></div><p class="log" id="battleLog"></p><div class="actions"><button id="speed">전투 속도 ×1</button><button id="battleHeal">회복약 사용</button></div><p class="hint">배치와 전술을 정한 후 자동으로 싸웁니다.</p></section>
@@ -261,7 +249,20 @@ if(revealed(npc.x,npc.y))drawCharacter(npc.x,npc.y,"#8c7653","#ddd5b7");
 if(s.stage>=4&&!s.roster.includes("blade"))drawCharacter(secondNpc.x,secondNpc.y,"#4c9c83","#5a3540");
 mobs.filter(visibleMob).forEach(m=>drawCharacter(m.x,m.y,m.id===5?"#703a7c":"#963e51","#25202c"));
 if(revealed(gate.x,gate.y)){const gx=(gate.x-camX+.5)*tw,gy=(gate.y-camY+.5)*th;ctx.fillStyle="#9d4737";ctx.fillRect(gx-16,gy-15,32,5);ctx.fillRect(gx-12,gy-12,4,26);ctx.fillRect(gx+8,gy-12,4,26);}
-const actor=$("fieldActor");actor.style.left=((posX-camX)*100/vw)+"%";actor.style.top=((posY-camY)*100/vh)+"%";actor.style.width=(100/vw)+"%";actor.style.height=(100/vh)+"%";actor.dataset.facing=facing;actor.classList.toggle("walking",!!joyDirection&&mode==="field");if(!actor.firstChild||actor.dataset.hero!==s.leader){actor.replaceChildren(sprite(currentHero()));if(s.leader==="wanderer"){actor.replaceChildren();const img=document.createElement("div");img.className="field-wanderer-sprite";img.innerHTML=wandererArt;actor.append(img);}actor.dataset.hero=s.leader;}}
+const actor=$("fieldActor");actor.style.left=((posX-camX)*100/vw)+"%";actor.style.top=((posY-camY)*100/vh)+"%";actor.style.width=(100/vw)+"%";actor.style.height=(100/vh)+"%";actor.dataset.facing=facing;actor.classList.toggle("walking",!!joyDirection&&mode==="field");if(!actor.firstChild||actor.dataset.hero!==s.leader){actor.replaceChildren(sprite(currentHero()));if(s.leader==="wanderer"){actor.replaceChildren();const img=document.createElement("div");img.className="field-wanderer-sprite";img.innerHTML=wandererArt;actor.append(img);}actor.dataset.hero=s.leader;}
+if(s.leader==="wanderer"){
+ const walking=!!joyDirection&&mode==="field",dir=["up","down","left","right"].includes(facing)?facing:"down";
+ const now=performance.now();
+ if(!walking){wandererWalkFrame=1;wandererWalkLast=now;}
+ else if(dir!==wandererWalkDirection){wandererWalkFrame=0;wandererWalkLast=now;}
+ else if(now-wandererWalkLast>=125){wandererWalkFrame=(wandererWalkFrame+1)%4;wandererWalkLast=now;}
+ wandererWalkDirection=dir;
+ const img=actor.querySelector(".field-wanderer-sprite");
+ if(img&& (img.dataset.dir!==dir||img.dataset.frame!==String(wandererWalkFrame))){
+  img.innerHTML=wandererFrame(dir,wandererWalkFrame);img.dataset.dir=dir;img.dataset.frame=String(wandererWalkFrame);
+ }
+}
+}
 function mapDraw(id){const c=$(id),ctx=c.getContext("2d"),mini=id==="minimap";ctx.fillStyle="#172b30";ctx.fillRect(0,0,c.width,c.height);const scale=mini?Math.min(c.width/11,c.height/7):Math.min(c.width/W,c.height/H);const ox=mini?c.width/2-(posX+.5)*scale:0,oy=mini?c.height/2-(posY+.5)*scale:0;for(let y=0;y<H;y++)for(let x=0;x<W;x++){const px=ox+x*scale,py=oy+y*scale;if(px+scale<0||py+scale<0||px>c.width||py>c.height||!revealed(x,y))continue;ctx.fillStyle=wall.has(key(x,y))?"#59676a":water.has(key(x,y))?"#376a93":trees.has(key(x,y))?"#336448":"#72856b";ctx.fillRect(px,py,Math.ceil(scale),Math.ceil(scale));}const dot=(x,y,color)=>{if(!revealed(x,y))return;ctx.fillStyle=color;ctx.fillRect(ox+(x+.25)*scale,oy+(y+.25)*scale,Math.max(3,scale*.5),Math.max(3,scale*.5));};dot(npc.x,npc.y,"#ffcf62");if(s.stage>=4&&!s.roster.includes("blade"))dot(secondNpc.x,secondNpc.y,"#ffcf62");dot(gate.x,gate.y,"#f2c85e");mobs.filter(visibleMob).forEach(m=>dot(m.x,m.y,"#ed655e"));dot(posX,posY,"#59b9ff");if(mini){ctx.strokeStyle="#f3f5e9";ctx.lineWidth=2;ctx.beginPath();ctx.arc(c.width/2,c.height/2,4,0,Math.PI*2);ctx.stroke();}else{ctx.strokeStyle="#f5e4a5";ctx.strokeRect(viewX*scale,viewY*scale,VW*scale,VH*scale);}}
 function blocked(x,y){return x<=0||y<=0||x>=W-1||y>=H-1||wall.has(key(x,y))||water.has(key(x,y))||trees.has(key(x,y))||(x===npc.x&&y===npc.y)||(x===secondNpc.x&&y===secondNpc.y&&s.stage>=4&&!s.roster.includes("blade"))||(x===gate.x&&y===gate.y)||mobs.some(m=>m.x===x&&m.y===y&&visibleMob(m));}
 function close8(a,b){return Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y))<=1;}
@@ -294,14 +295,30 @@ function wandererPixelsSvg(rows,yOffset=0){
   return color?'<rect x="'+x+'" y="'+(y+yOffset)+'" width="1" height="1" fill="'+color+'"/>':'';
  }).join('')).join('');
 }
+// 4 cardinal directions x 4 discrete walking poses. No whole-sprite bob or CSS sliding.
 const wandererTorso=wandererPixelsSvg(wandererPixels.slice(0,21));
-const wandererArt='<svg class="wanderer-rig" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 30" shape-rendering="crispEdges">'+
- '<ellipse class="wanderer-ground" cx="12" cy="28" rx="7" ry="1.3" fill="#111a20" opacity=".4"/>'+
- '<g class="wanderer-leg leg-back"><path d="M10 19h4v5h-1v3h-5v-3h1z" fill="#44332e"/><path d="M8 26h6v2H7v-1z" fill="#1b1a20"/></g>'+
- '<g class="wanderer-leg leg-front"><path d="M14 19h4v5h-1v3h-5v-3h1z" fill="#6b5040"/><path d="M12 26h6v2h-7v-1z" fill="#1b1a20"/></g>'+
- '<g class="wanderer-upper">'+wandererTorso+'</g>'+
- '<g class="wanderer-back-detail"><path d="M8 4h9l3 6-2 9H7L5 10z" fill="#28242d"/><path d="M9 7h7v9H9z" fill="#343743"/><path d="M7 18h12v4H7z" fill="#7b4141"/></g>'+
- '</svg>';
+const wandererWalkPoses=[
+ {left:-2,right:2,ly:0,ry:-1,cloak:-1},
+ {left:0,right:0,ly:-1,ry:0,cloak:0},
+ {left:2,right:-2,ly:-1,ry:0,cloak:1},
+ {left:0,right:0,ly:0,ry:-1,cloak:0}
+];
+function wandererFrame(direction,step){
+ const p=wandererWalkPoses[step%4],back=direction==="up",side=direction==="left"||direction==="right";
+ const mirror=direction==="left"?' transform="translate(24 0) scale(-1 1)"':'';
+ const torso=back?'<path d="M8 4h9l3 6-2 9H7L5 10z" fill="#292b37"/><path d="M9 7h7v9H9z" fill="#46505a"/><path d="M7 17h12v5H7z" fill="#6e4146"/>':
+  side?'<g transform="translate(1 0) scale(.90 1)">'+wandererTorso+'</g>':wandererTorso;
+ const leg=(x,y,light,shift,lift)=>'<g transform="translate('+shift+' '+lift+')"><path d="M'+x+' '+y+'h4v5h-1v3h-5v-3h1z" fill="'+light+'"/><path d="M'+(x-2)+' '+(y+7)+'h7v2h-7z" fill="#1b1a20"/></g>';
+ return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 30" shape-rendering="crispEdges">'+
+ '<ellipse class="wanderer-ground" cx="12" cy="28.6" rx="6" ry="1.1" fill="#101a1b"/>'+
+ '<g'+mirror+'>'+
+ leg(9,19,"#47382e",p.left,p.ly)+leg(14,19,"#705240",p.right,p.ry)+
+ '<g transform="translate('+p.cloak+' 0)">'+torso+'</g>'+
+ (side?'<path d="M17 9l4 4-1 7-3 1z" fill="#4c3d42"/>':'')+
+ '</g></svg>';
+}
+const wandererArt=wandererFrame("down",1);
+let wandererWalkFrame=0,wandererWalkLast=0,wandererWalkDirection="down";
 // Animation state is visual only; combat rules are unchanged.
 const wandererMotion={state:"idle",until:0,hitUntil:0,skillUntil:0,lastK:null};
 function wandererPose(u){
