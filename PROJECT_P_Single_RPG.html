@@ -187,7 +187,7 @@ body:has(#battle.active) #battle .arena{display:none!important}body:has(#battle.
 @keyframes wandererHurt{0%{filter:brightness(2);transform:translateX(-4px)}60%{filter:brightness(.7);transform:translateX(2px)}100%{filter:none;transform:none}}
 @keyframes wandererSkill{0%{filter:brightness(1.8) drop-shadow(0 0 6px #8ae2ff);transform:scale(.92)}60%{transform:translateX(5px) scale(1.1)}100%{filter:none;transform:none}}
 @keyframes slashArc{0%{opacity:0;transform:rotate(-75deg) scale(.6)}45%{opacity:1}100%{opacity:0;transform:rotate(40deg) scale(1.2)}}
-</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.21</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
+</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.22</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
 <main><section class="panel" id="statsPanel"><div class="stats"><b id="level"></b><span id="xp"></span><span id="gold"></span><span id="potions"></span><span id="quest"></span></div></section>
 <section class="panel fieldpanel" id="fieldPanel"><div class="story" id="story"></div><div id="dialogue" hidden><b id="speaker"></b><p id="dialogueText"></p><button id="dialogueNext">다음 대사 ▶</button></div><div class="field" id="field" aria-label="무림 필드"><div id="worldLayer"><canvas id="terrainCanvas" width="720" height="540"></canvas></div><div id="fieldActor"></div><div id="landscapeHud"><div id="landscapeStatus">무림 · 탐험</div><div id="floatStick"><div id="floatKnob"></div></div><button id="contextAction" hidden>대화</button><button id="landscapeMenu">☰</button></div></div><div class="hudrow"><div class="mapcolumn"><canvas id="minimap" width="220" height="120" aria-label="미니맵"></canvas><span id="location"></span></div><div class="quickactions"><button id="talk">대화</button><button id="heal">회복</button><button id="partyBtn">동료</button><button id="mapToggle">지도</button></div></div><div class="joyrow"><div id="joystick" aria-label="이동 조이스틱"><div id="joyKnob"></div></div><div class="questmini"><b id="miniQuest">현재 목표</b><span>조이스틱으로 이동</span></div></div><div id="fullMap" hidden><canvas id="bigmap" width="420" height="280"></canvas></div></section>
 <section class="panel battle" id="battle"><h3 id="battleTitle">전투</h3><div id="tacticalPanel"><div id="tacticalBoard"></div><div id="tacticalSide"><b id="tacticalStatus">전투 준비</b><div id="tacticChoices"></div><button id="battleStart">⚔️ 전투 시작</button><small>아군은 아래 3줄에 배치 · 캐릭터 선택 후 전술 지정</small></div></div><p class="log" id="battleLog"></p><div class="actions"><button id="speed">전투 속도 ×1</button><button id="battleHeal">회복약 사용</button></div><p class="hint">배치와 전술을 정한 후 자동으로 싸웁니다.</p></section>
@@ -286,36 +286,26 @@ function potion(){if(s.potions<1){tell("회복약이 없다.");return false;}if(
 const trainingNames=["기초 3대3","버티기 방진","후방 술사","산문 수호전"];
 function trainingMob(index){return{id:100+index,x:gate.x,y:gate.y,name:"산문 수련 · "+trainingNames[index],hp:[58,66,60,85][index],atk:[8,9,9,11][index],chapter:3,training:index};}
 const roles={wanderer:"fighter",blade:"tank",shadow:"assassin",sage:"mage"};
-const wandererPalette=["#4f1b1e","#806455",null,"#f8ce9a","#593f38","#332729","#c49875","#463635","#100f14","#9e5b3d","#675047","#a0795f"];
-const wandererPixels="222222588877558222222222\n222222525A41A15522222222\n22222227475A747822222222\n22222875800A082522222222\n2222282287757751A2222222\n222228587452274772522222\n222280084144571427722222\n22220082A17A75BA52222222\n220002257217B65720022222\n2228888855451A2582022222\n22205857242BB27258002222\n220028552BB33B1278502222\n220222285633331282282222\n2222228225BBB48222222222\n2222284BA2B1157B52222222\n222225B6615B4B66B2222222\n2222216BA5717A166A222222\n222277788575528876A22222\n22287BA8505B70081A722222\n222754287185214874522222\n2259717A4A8484A5AA172222\n22AB7B72212A290299112222\n22B458209B55294588462222\n22A558259657299582715222\n25458857B1255997582A5222\n225228258822844882222222\n222228545888882458222222\n222888542888888558822222\n222222222228888822222222".split("\n");
-// Cardinal walking prototype: feet articulate separately; the torso stays grounded.
-function wandererPixelsSvg(rows,yOffset=0){
- return rows.map((row,y)=>Array.from(row).map((ch,x)=>{
-  const color=wandererPalette[parseInt(ch,12)];
-  return color?'<rect x="'+x+'" y="'+(y+yOffset)+'" width="1" height="1" fill="'+color+'"/>':'';
- }).join('')).join('');
-}
-// 4 cardinal directions x 4 discrete walking poses. No whole-sprite bob or CSS sliding.
-const wandererTorso=wandererPixelsSvg(wandererPixels.slice(0,21));
-const wandererWalkPoses=[
- {left:-2,right:2,ly:0,ry:-1,cloak:-1},
- {left:0,right:0,ly:-1,ry:0,cloak:0},
- {left:2,right:-2,ly:-1,ry:0,cloak:1},
- {left:0,right:0,ly:0,ry:-1,cloak:0}
-];
+// v0.9.22: sampled from the previously approved full-body 4-direction concept sheet.
+// Source art is used for all four views; interpolated steps remain a prototype.
+const originalWalkPalette=["transparent","#ddaf89","#b4896d","#9d7158","#83685a","#7f5444","#6a4e43","#564542","#682828","#472e2d","#3a3033","#372222","#262225","#191215","#0e080c","#020205"];
+const originalWalkDirections=["00000000000000000000000000000000f0b7aa00000000000000007dd464446b000000000000000a6696065700000000000000a7cb845bf00000000000000eabfb7bbbc73400000000000d0db6706777460000000000dd8da7aa0777aa660000000008b062476f429070000000088b0a76675666700000000088ddcc7035a15c70880000000fcdfdab99659cafbb000000089eb506d4197baa08800000880007d2311126ba00b00000800000d2111117000000000000000dde322290000000000000009350336605400000000000003222a22622250000000000031124044022110000000000073bf076a7cfb32000000000624fc9b74bbee42400000000034fe5b7495da4bd0000000597f954dd0746057600000033713695a76b50925340000033b38dd477783005832000002bbfe9817ac839afe610000069b00c41aaa7270faa400000600ea732aaa634acc0570000000fd7ffeacb57fe000000000000b890000ffb6000000000000e959ee0efeb6bf00000000000000000000000000000","0000000000000000000000000000000cc000042000000000000e00a64a005450000000000000e94296000000960000000000a67f23ba74a0730000000000aafd7c76447ad00000000000aa0bea427a9a700000000000a70ea769726472000000000080ffaaad7675b5600000008bb0ff00ca7a075da00000008dbcef00dcaeb66ec00000000dbcee0057e444700000000088bb000f96f211200000000080cd000ff971112000000000800000fbb99311b0000000000000033313967c00000000000000755312264300000000000000b631111392500000000000073551113099600000000000553213bdfcbdb000000000006324622cdb86700000000003117fa22ae7ac70000000006134b0dd7043ed9800000000b26500f9130b8a8800000000b355bdfd89088790000000006409b000007880000000000070000007074077400000000000000da6636aaa7000000000000000e00bddfe00000000000000efd958ffe750000000000000efed550fedc0000000000000000000000000000000","00000000060076000000000000000000a6709cc00000000000000000626934000000000000000004833424b0000000000000002589647964000000000000077ae977aab760000000000000aad9077dda0000000000007ed98ba7ab80d700000000000dd99a77a88ee0000000000058000a77af0de60000000008500000aa0f00f7500000000808d00e00fefbd0b00000000d000fff00fded00d000000000000eecc0fed000000000000000e009a000fd00000000000000750ca0de77c000000000000933324035537000000000000331233235126000000000005142134621122700000000000631321211341700000000042ab12222112523200000000e46d15612122436a0000000095d93dbb93114d970000000081ba70dff2276d26000000003def098df680cedb000000034df0ab8c0bb00fd80000000250c7755aa750600b0000000000db432cc55aad0000000000000fedcf0bb0f0000000000000ed69f000c69fe000000000000edee000eee00000000000000000000000000000000","00000000000000000000000000000003000009a000000000000006050000446a76000000000040000008672600000000000040c967b85dc7a0000000000009776470bb0aa000000000006777744600baa0700000000a4a443d67aed9cf000000000aa65a700aaeb990000000000dd2707a0000ea9d550000000ee58dca000feaa0000000000005344d240edc98000000000001113c5d0000088000000000011128bfe00000800000000000223976ad0000000000000000b8541233600000000000000a26421235900000000000000434211125500000000000000699751126331000000000000bf0ffd921332000000000000b468f62244230000000000006b7200460f212000000000056084665fdb622300000000037089d21deb616900000000007a87799ffb725b0000000000c03926000000660000000000a07666aa0000440000000000a042a64ace0060000000000000bdfb90000000000000000057ffb58ce00000000000000000ef9600e0000000000000000000000000000000000"];
+const originalWalkIndex={down:0,right:1,up:2,left:3};
+const originalWalkCache=new Map();
 function wandererFrame(direction,step){
- const p=wandererWalkPoses[step%4],back=direction==="up",side=direction==="left"||direction==="right";
- const mirror=direction==="left"?' transform="translate(24 0) scale(-1 1)"':'';
- const torso=back?'<path d="M8 4h9l3 6-2 9H7L5 10z" fill="#292b37"/><path d="M9 7h7v9H9z" fill="#46505a"/><path d="M7 17h12v5H7z" fill="#6e4146"/>':
-  side?'<g transform="translate(1 0) scale(.90 1)">'+wandererTorso+'</g>':wandererTorso;
- const leg=(x,y,light,shift,lift)=>'<g transform="translate('+shift+' '+lift+')"><path d="M'+x+' '+y+'h4v5h-1v3h-5v-3h1z" fill="'+light+'"/><path d="M'+(x-2)+' '+(y+7)+'h7v2h-7z" fill="#1b1a20"/></g>';
- return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 30" shape-rendering="crispEdges">'+
- '<ellipse class="wanderer-ground" cx="12" cy="28.6" rx="6" ry="1.1" fill="#101a1b"/>'+
- '<g'+mirror+'>'+
- leg(9,19,"#47382e",p.left,p.ly)+leg(14,19,"#705240",p.right,p.ry)+
- '<g transform="translate('+p.cloak+' 0)">'+torso+'</g>'+
- (side?'<path d="M17 9l4 4-1 7-3 1z" fill="#4c3d42"/>':'')+
- '</g></svg>';
+ const key=direction+":"+step;if(originalWalkCache.has(key))return originalWalkCache.get(key);
+ const data=originalWalkDirections[originalWalkIndex[direction]??0];
+ let pixels='';
+ for(let y=0;y<32;y++)for(let x=0;x<24;x++){
+  const color=originalWalkPalette[parseInt(data[y*24+x],16)];if(!color||color==="transparent")continue;
+  const swing=[-1,0,1,0][step%4],foot=y>=24;
+  const dx=foot?(x<12?swing:-swing):0;
+  const dy=foot&&((x<12&&swing<0)||(x>=12&&swing>0))?-1:0;
+  pixels+='<rect x="'+(x+dx)+'" y="'+(y+dy)+'" width="1" height="1" fill="'+color+'"/>';
+ }
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 32" shape-rendering="crispEdges">'+
+ '<ellipse cx="12" cy="30.5" rx="5" ry=".7" fill="#11191b" opacity=".3"/>'+pixels+'</svg>';
+ originalWalkCache.set(key,svg);return svg;
 }
 const wandererArt=wandererFrame("down",1);
 let wandererWalkFrame=0,wandererWalkLast=0,wandererWalkDirection="down";
