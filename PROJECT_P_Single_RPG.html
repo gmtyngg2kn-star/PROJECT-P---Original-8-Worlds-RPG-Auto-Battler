@@ -197,11 +197,24 @@ body:has(#battle.active) #battle .arena{display:none!important}body:has(#battle.
 @keyframes tacticalSwing{0%{transform:translateX(-3px) rotate(-9deg)}45%{transform:translateX(5px) rotate(9deg) scale(1.12)}100%{transform:translateX(0) rotate(0)}}
 @keyframes tacticalCast{0%{transform:translateY(2px) scale(.95)}50%{transform:translateY(-5px) scale(1.13);filter:brightness(1.6)}100%{transform:translateY(0) scale(1)}}
 /* v0.9.28: persistent sprite overlay, constant velocity across tile updates */
-#tacticalBoard .tcell .unit-visual{visibility:hidden}
+#battle:has(#battleStart:disabled) #tacticalBoard .tcell .unit-visual{visibility:hidden}
+#tacticalBoard .battle-grid-hidden{visibility:hidden}
 .battle-moving-unit{position:absolute;top:0;left:0;z-index:12;pointer-events:none;will-change:transform;display:flex;align-items:center;justify-content:center;width:clamp(22px,5dvh,46px);height:clamp(25px,6dvh,52px)}
 .battle-moving-sprite{font-size:clamp(17px,4dvh,29px);line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;transform-origin:50% 70%}
 .battle-moving-sprite svg{width:auto;height:100%;max-width:100%;image-rendering:pixelated;filter:drop-shadow(1px 2px 1px #101820)}
-</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.28</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
+/* v0.9.29: follow labels, HP and dialogue; lightweight nonblocking skill VFX */
+.battle-moving-unit{flex-direction:column;overflow:visible}
+.battle-follow-speech{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:clamp(8px,1.5dvh,11px);font-weight:800;background:#fff0ce;color:#32251b;border:1px solid #aa8554;border-radius:5px;padding:1px 4px;max-width:105px;overflow:hidden;text-overflow:ellipsis}
+.battle-follow-speech:empty{display:none}
+.battle-follow-name{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:clamp(8px,1.6dvh,12px);font-weight:700;color:#fff;text-shadow:0 1px 3px #000,0 -1px 2px #000}
+.battle-follow-hp{position:absolute;bottom:1px;left:7%;width:86%;height:3px;background:#46343b}
+.battle-follow-hp span{display:block;height:100%;background:#73c995}
+.battle-follow-stunned .battle-moving-sprite{filter:brightness(.75)}
+.battle-skill-effect{position:absolute;z-index:18;pointer-events:none;transform:translate(-50%,-50%);font-size:clamp(23px,5dvh,44px);font-weight:900;animation:skillPop .4s ease-out forwards;text-shadow:0 0 7px currentColor}
+.battle-skill-effect.fx-push{color:#e9bb64}.battle-skill-effect.fx-magic{color:#79d7ff}.battle-skill-effect.fx-shadow{color:#bc7aff}.battle-skill-effect.fx-hit{color:#ffe4b6}.battle-skill-effect.fx-stun{color:#fff38b}
+.battle-skill-effect.fx-hit:after{content:"✦"}
+@keyframes skillPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.35) rotate(-35deg)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.7) rotate(25deg)}}
+</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.29</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
 <main><section class="panel" id="statsPanel"><div class="stats"><b id="level"></b><span id="xp"></span><span id="gold"></span><span id="potions"></span><span id="quest"></span></div></section>
 <section class="panel fieldpanel" id="fieldPanel"><div class="story" id="story"></div><div id="dialogue" hidden><b id="speaker"></b><p id="dialogueText"></p><button id="dialogueNext">다음 대사 ▶</button></div><div class="field" id="field" aria-label="무림 필드"><div id="worldLayer"><canvas id="terrainCanvas" width="720" height="540"></canvas></div><div id="fieldActor"></div><div id="landscapeHud"><div id="landscapeStatus">무림 · 탐험</div><div id="floatStick"><div id="floatKnob"></div></div><button id="contextAction" hidden>대화</button><button id="landscapeMenu">☰</button></div></div><div class="hudrow"><div class="mapcolumn"><canvas id="minimap" width="220" height="120" aria-label="미니맵"></canvas><span id="location"></span></div><div class="quickactions"><button id="talk">대화</button><button id="heal">회복</button><button id="partyBtn">동료</button><button id="mapToggle">지도</button></div></div><div class="joyrow"><div id="joystick" aria-label="이동 조이스틱"><div id="joyKnob"></div></div><div class="questmini"><b id="miniQuest">현재 목표</b><span>조이스틱으로 이동</span></div></div><div id="fullMap" hidden><canvas id="bigmap" width="420" height="280"></canvas></div></section>
 <section class="panel battle" id="battle"><h3 id="battleTitle">전투</h3><div id="tacticalPanel"><div id="tacticalBoard"></div><div id="tacticalSide"><b id="tacticalStatus">전투 준비</b><div id="tacticChoices"></div><button id="battleStart">⚔️ 전투 시작</button><small>아군은 아래 3줄에 배치 · 캐릭터 선택 후 전술 지정</small></div></div><p class="log" id="battleLog"></p><div class="actions"><button id="speed">전투 속도 ×1</button><button id="battleHeal">회복약 사용</button></div><p class="hint">배치와 전술을 정한 후 자동으로 싸웁니다.</p></section>
@@ -396,6 +409,16 @@ function stopBattleVisuals(){
  for(const v of battleVisuals.values())v.el.remove();
  battleVisuals.clear();
 }
+function battleSkillEffect(u,type){
+ if(!combat?.running||!u)return;
+ const board=$("tacticalBoard"),host=board.parentElement,tile=board.children[u.k];
+ if(!tile)return;
+ const tr=tile.getBoundingClientRect(),hr=host.getBoundingClientRect();
+ const effect=document.createElement("div");effect.className="battle-skill-effect fx-"+type;
+ effect.style.left=(tr.left-hr.left+tr.width/2)+"px";effect.style.top=(tr.top-hr.top+tr.height/2)+"px";
+ effect.textContent=type==="push"?"➤":type==="magic"?"✦":type==="shadow"?"✧":type==="stun"?"✳":"";
+ host.append(effect);setTimeout(()=>effect.remove(),420);
+}
 function syncBattleVisuals(){
  if(!combat?.running)return;
  const board=$("tacticalBoard"),host=board.parentElement;
@@ -408,12 +431,20 @@ function syncBattleVisuals(){
   let v=battleVisuals.get(u.id);
   if(!v){
    const el=document.createElement("div");el.className="battle-moving-unit";
+   const speech=document.createElement("div");speech.className="battle-follow-speech";el.append(speech);
    const sprite=document.createElement("div");sprite.className="battle-moving-sprite";
    if(u.id==="wanderer")sprite.innerHTML=wandererArt;else sprite.textContent=u.icon;
-   el.append(sprite);host.append(el);
-   v={el,sprite,x:targetX,y:targetY,targetX,targetY,lastAttack:0,attackUntil:0};battleVisuals.set(u.id,v);
+   el.append(sprite);
+   const name=document.createElement("div");name.className="battle-follow-name";name.textContent=u.name.slice(0,4);el.append(name);
+   const hp=document.createElement("div");hp.className="battle-follow-hp";const fill=document.createElement("span");hp.append(fill);el.append(hp);
+   host.append(el);
+   v={el,sprite,speech,name,hp:fill,x:targetX,y:targetY,targetX,targetY,lastAttack:0,attackUntil:0};battleVisuals.set(u.id,v);
   }
   v.targetX=targetX;v.targetY=targetY;
+  v.hp.style.width=Math.max(0,Math.round(u.hp/u.max*100))+"%";
+  const line=combat.speech?.[u.id];
+  v.speech.textContent=line&&line.until>(combat.elapsed||0)?line.text:"";
+  v.el.classList.toggle("battle-follow-stunned",(u.stunTime||0)>0);
   if(u.attackVisualUntil&&u.attackVisualUntil>v.lastAttack&&u.attackVisualUntil>(combat.elapsed||0)){
    v.lastAttack=u.attackVisualUntil;
    v.sprite.animate(u.role==="mage"?[
@@ -447,7 +478,7 @@ function battleDraw(){
  for(let k=0;k<36;k++){
   const u=combat.allies.concat(combat.enemies).find(x=>x.hp>0&&x.k===k);
   const b=document.createElement("button");b.className="tcell"+(k>=18?" home":"")+(u?.side==="enemy"?" foe":"")+(u?.id===combat.selected?" chosen":"");
-  if(u){b.dataset.unit=u.id;b.dataset.k=String(k);const speech=combat.speech?.[u.id];if(combat.running&&speech&&speech.until>(combat.elapsed||0)){const bubble=document.createElement("span");bubble.className="battle-speech";bubble.textContent=speech.text;b.append(bubble);}if(u.stunTime>0){b.classList.add("unit-stunned");const st=document.createElement("span");st.className="stun-mark";st.textContent="💫";b.append(st);}if(combat.effects?.actor===u.id)b.classList.add("fx-actor");const em=document.createElement("b");if(combat.running&&u.attackVisualUntil>(combat.elapsed||0))em.classList.add(u.role==="mage"?"attack-cast":"attack-swing");if(u.id==="wanderer"){em.className="wanderer-sprite";em.dataset.motion=wandererPose(u);em.dataset.facing=combat?.running?"right":"down";em.innerHTML=wandererArt;}else em.textContent=u.icon;em.classList.add("unit-visual");b.append(em);const name=document.createElement("span");name.textContent=u.name.slice(0,4);b.append(name);const hp=document.createElement("i");hp.style.width=Math.max(0,Math.round(u.hp/u.max*90))+"%";b.append(hp);}
+  if(u){b.dataset.unit=u.id;b.dataset.k=String(k);const speech=combat.speech?.[u.id];if(!combat.running&&speech&&speech.until>(combat.elapsed||0)){const bubble=document.createElement("span");bubble.className="battle-speech";bubble.textContent=speech.text;b.append(bubble);}if(!combat.running&&u.stunTime>0){b.classList.add("unit-stunned");const st=document.createElement("span");st.className="stun-mark";st.textContent="💫";b.append(st);}if(combat.effects?.actor===u.id)b.classList.add("fx-actor");const em=document.createElement("b");if(!combat.running&&u.attackVisualUntil>(combat.elapsed||0))em.classList.add(u.role==="mage"?"attack-cast":"attack-swing");if(u.id==="wanderer"){em.className="wanderer-sprite";em.dataset.motion=wandererPose(u);em.dataset.facing=combat?.running?"right":"down";em.innerHTML=wandererArt;}else em.textContent=u.icon;em.classList.add("unit-visual");b.append(em);const name=document.createElement("span");name.textContent=u.name.slice(0,4);if(combat.running)name.classList.add("battle-grid-hidden");b.append(name);const hp=document.createElement("i");if(combat.running)hp.classList.add("battle-grid-hidden");hp.style.width=Math.max(0,Math.round(u.hp/u.max*90))+"%";b.append(hp);}
   b.onclick=()=>{if(combat.running||k<18)return;const clicked=combat.allies.find(x=>x.k===k);if(clicked)combat.selected=clicked.id;else{const chosen=combat.allies.find(x=>x.id===combat.selected);if(chosen){chosen.k=k;combat.selected=null;}}battleDraw();};board.append(b);
  }
  if(combat.running)syncBattleVisuals();
@@ -479,7 +510,7 @@ function tacticalTick(){
  if(c.turn>900||!c.allies.some(v=>v.hp>0)||!c.enemies.some(v=>v.hp>0)){finish(c.enemies.every(v=>v.hp<=0));return;}
  const units=c.allies.concat(c.enemies).filter(v=>v.hp>0);
  const logs=[],effects=[],occupiedNow=new Set(units.map(v=>v.k));
- const fx=(u,type,cells)=>effects.push({actor:u.id,type,cells,until:c.elapsed+.55});
+ const fx=(u,type,cells)=>{effects.push({actor:u.id,type,cells,until:c.elapsed+.55});if(["push","magic","shadow","hit","stun"].includes(type))battleSkillEffect(u,type);};
  // Opening charge resolves first, before other units move or attack.
  for(const u of units){
   if(u.side!=="ally"||u.skill!=="push"||u.used)continue;
