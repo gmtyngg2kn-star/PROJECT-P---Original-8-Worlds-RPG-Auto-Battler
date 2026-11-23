@@ -231,7 +231,7 @@ body:has(#battle.active) #battle .arena{display:none!important}body:has(#battle.
 .battle-skill-effect.fx-magic{color:#88d8ff;border-style:double;box-shadow:0 0 10px #88d8ff}
 /* v0.9.32: directional sword sweep layered over the approved wanderer art */
 .wanderer-sword-slash{position:absolute;left:50%;top:37%;width:32px;height:32px;border:solid #c8e6f2;border-width:3px 3px 0 0;border-radius:50%;box-shadow:3px -2px 5px #75bce599;pointer-events:none;z-index:5;opacity:0;transform-origin:50% 50%}
-</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.32</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
+</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.33</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
 <main><section class="panel" id="statsPanel"><div class="stats"><b id="level"></b><span id="xp"></span><span id="gold"></span><span id="potions"></span><span id="quest"></span></div></section>
 <section class="panel fieldpanel" id="fieldPanel"><div class="story" id="story"></div><div id="dialogue" hidden><b id="speaker"></b><p id="dialogueText"></p><button id="dialogueNext">다음 대사 ▶</button></div><div class="field" id="field" aria-label="무림 필드"><div id="worldLayer"><canvas id="terrainCanvas" width="720" height="540"></canvas></div><div id="fieldActor"></div><div id="landscapeHud"><div id="landscapeStatus">무림 · 탐험</div><div id="floatStick"><div id="floatKnob"></div></div><button id="contextAction" hidden>대화</button><button id="landscapeMenu">☰</button></div></div><div class="hudrow"><div class="mapcolumn"><canvas id="minimap" width="220" height="120" aria-label="미니맵"></canvas><span id="location"></span></div><div class="quickactions"><button id="talk">대화</button><button id="heal">회복</button><button id="partyBtn">동료</button><button id="mapToggle">지도</button></div></div><div class="joyrow"><div id="joystick" aria-label="이동 조이스틱"><div id="joyKnob"></div></div><div class="questmini"><b id="miniQuest">현재 목표</b><span>조이스틱으로 이동</span></div></div><div id="fullMap" hidden><canvas id="bigmap" width="420" height="280"></canvas></div></section>
 <section class="panel battle" id="battle"><h3 id="battleTitle">전투</h3><div id="tacticalPanel"><div id="tacticalBoard"></div><div id="tacticalSide"><b id="tacticalStatus">전투 준비</b><div id="tacticChoices"></div><button id="battleStart">⚔️ 전투 시작</button><small>아군은 아래 3줄에 배치 · 캐릭터 선택 후 전술 지정</small></div></div><p class="log" id="battleLog"></p><div class="actions"><button id="speed">전투 속도 ×1</button><button id="battleHeal">회복약 사용</button></div><p class="hint">배치와 전술을 정한 후 자동으로 싸웁니다.</p></section>
@@ -359,6 +359,50 @@ function wandererFrame(direction,step){
  const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 32" shape-rendering="crispEdges">'+
  '<ellipse cx="12" cy="30.5" rx="5" ry=".7" fill="#11191b" opacity=".3"/>'+pixels+'</svg>';
  originalWalkCache.set(key,svg);return svg;
+}
+// Six hand-positioned pixel attack poses. Preserve the approved body and
+// redraw the weapon-side arm and blade at distinct coordinates per frame.
+const wandererAttackCache=new Map();
+function wandererAttackFrame(direction,phase){
+ const key=direction+":"+phase;
+ if(wandererAttackCache.has(key))return wandererAttackCache.get(key);
+ const base=originalWalkDirections[originalWalkIndex[direction]??0];
+ const right=direction==="right"||direction.endsWith("Right");
+ const left=direction==="left"||direction.endsWith("Left");
+ const back=direction==="up"||direction.startsWith("up");
+ const sign=left?-1:1;
+ const shoulderX=left?8:16,shoulderY=back?16:17;
+ const poses=[
+  {handX:shoulderX+sign*1,handY:shoulderY+4,tipX:shoulderX+sign*3,tipY:shoulderY-7},
+  {handX:shoulderX+sign*3,handY:shoulderY+1,tipX:shoulderX+sign*7,tipY:shoulderY-9},
+  {handX:shoulderX+sign*5,handY:shoulderY-2,tipX:shoulderX+sign*12,tipY:shoulderY-5},
+  {handX:shoulderX+sign*6,handY:shoulderY+1,tipX:shoulderX+sign*13,tipY:shoulderY+5},
+  {handX:shoulderX+sign*4,handY:shoulderY+4,tipX:shoulderX+sign*9,tipY:shoulderY+10},
+  {handX:shoulderX+sign*2,handY:shoulderY+5,tipX:shoulderX+sign*4,tipY:shoulderY+11}
+ ];
+ const p=poses[Math.max(0,Math.min(5,phase))];
+ let pixels="";
+ for(let y=0;y<32;y++)for(let x=0;x<24;x++){
+  // Clear only the sword-side forearm, keeping the approved face, hair,
+  // clothing, legs and body silhouette unchanged.
+  const arm=x>=shoulderX-2&&x<=shoulderX+2&&y>=shoulderY+2&&y<=shoulderY+7;
+  if(arm)continue;
+  const color=originalWalkPalette[parseInt(base[y*24+x],16)];
+  if(color&&color!=="transparent")pixels+='<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="'+color+'"/>';
+ }
+ function line(x1,y1,x2,y2,color,width){
+  return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+color+'" stroke-width="'+width+'" stroke-linecap="square"/>';
+ }
+ // Sleeve -> forearm -> grip -> metallic blade, each drawn in pixel space.
+ pixels+=line(shoulderX,shoulderY,p.handX,p.handY,"#472e2d",3);
+ pixels+=line(shoulderX,shoulderY,p.handX,p.handY,"#83685a",1);
+ pixels+='<rect x="'+(p.handX-1)+'" y="'+(p.handY-1)+'" width="2" height="2" fill="#b4896d"/>';
+ const bladeStartX=p.handX+sign*1,bladeStartY=p.handY-1;
+ pixels+=line(p.handX,p.handY,bladeStartX,bladeStartY,"#3a3033",2);
+ pixels+=line(bladeStartX,bladeStartY,p.tipX,p.tipY,"#54616d",3);
+ pixels+=line(bladeStartX,bladeStartY,p.tipX,p.tipY,"#dce9ec",1);
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 34 40" shape-rendering="crispEdges">'+pixels+'</svg>';
+ wandererAttackCache.set(key,svg);return svg;
 }
 const wandererArt=wandererFrame("down",1);
 let wandererWalkFrame=0,wandererWalkLast=0,wandererWalkDirection="down";
@@ -492,7 +536,7 @@ function syncBattleVisuals(){
   v.el.classList.toggle("battle-follow-stunned",(u.stunTime||0)>0);
   if(u.attackVisualUntil&&u.attackVisualUntil>v.lastAttack&&u.attackVisualUntil>(combat.elapsed||0)){
    v.lastAttack=u.attackVisualUntil;
-   if(u.id==="wanderer")playWandererAttack(v,u);
+   if(u.id==="wanderer"){v.attackStart=performance.now();v.attackPhase=-1;v.attackDirection=v.dir;playWandererAttack(v,u);}
    else v.sprite.animate(u.role==="mage"?[
     {transform:"translateY(0) scale(1)"},{transform:"translateY(-6px) scale(1.15)",offset:.45},{transform:"translateY(0) scale(1)"}
    ]:[
@@ -522,8 +566,13 @@ function animateBattleVisuals(now){
     v.walkClock+=dt;
     if(v.walkClock>=.105){v.frame=(v.frame+1)%4;v.walkClock=0;}
    }else{v.frame=1;v.walkClock=0;}
-   const pose=v.dir+":"+v.frame;
-   if(v.lastPose!==pose){v.sprite.innerHTML=wandererFrame(v.dir,v.frame);v.lastPose=pose;}
+   const attacking=v.attackStart&&now-v.attackStart<270;
+   const phase=attacking?Math.min(5,Math.floor((now-v.attackStart)/45)):0;
+   const pose=attacking?"attack:"+v.attackDirection+":"+phase:v.dir+":"+v.frame;
+   if(v.lastPose!==pose){
+    v.sprite.innerHTML=attacking?wandererAttackFrame(v.attackDirection,phase):wandererFrame(v.dir,v.frame);
+    v.lastPose=pose;
+   }
   }
   if(v.dashSpeed&&Math.hypot(v.targetX-v.x,v.targetY-v.y)<1){
    const u=combat.allies.concat(combat.enemies).find(q=>q.id===id);
