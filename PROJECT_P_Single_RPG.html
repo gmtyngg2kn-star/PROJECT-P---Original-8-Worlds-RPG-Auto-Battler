@@ -231,7 +231,7 @@ body:has(#battle.active) #battle .arena{display:none!important}body:has(#battle.
 .battle-skill-effect.fx-magic{color:#88d8ff;border-style:double;box-shadow:0 0 10px #88d8ff}
 /* v0.9.32: directional sword sweep layered over the approved wanderer art */
 .wanderer-sword-slash{position:absolute;left:50%;top:37%;width:32px;height:32px;border:solid #c8e6f2;border-width:3px 3px 0 0;border-radius:50%;box-shadow:3px -2px 5px #75bce599;pointer-events:none;z-index:5;opacity:0;transform-origin:50% 50%}
-</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.35</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
+</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.36</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
 <main><section class="panel" id="statsPanel"><div class="stats"><b id="level"></b><span id="xp"></span><span id="gold"></span><span id="potions"></span><span id="quest"></span></div></section>
 <section class="panel fieldpanel" id="fieldPanel"><div class="story" id="story"></div><div id="dialogue" hidden><b id="speaker"></b><p id="dialogueText"></p><button id="dialogueNext">다음 대사 ▶</button></div><div class="field" id="field" aria-label="무림 필드"><div id="worldLayer"><canvas id="terrainCanvas" width="720" height="540"></canvas></div><div id="fieldActor"></div><div id="landscapeHud"><div id="landscapeStatus">무림 · 탐험</div><div id="floatStick"><div id="floatKnob"></div></div><button id="contextAction" hidden>대화</button><button id="landscapeMenu">☰</button></div></div><div class="hudrow"><div class="mapcolumn"><canvas id="minimap" width="220" height="120" aria-label="미니맵"></canvas><span id="location"></span></div><div class="quickactions"><button id="talk">대화</button><button id="heal">회복</button><button id="partyBtn">동료</button><button id="mapToggle">지도</button></div></div><div class="joyrow"><div id="joystick" aria-label="이동 조이스틱"><div id="joyKnob"></div></div><div class="questmini"><b id="miniQuest">현재 목표</b><span>조이스틱으로 이동</span></div></div><div id="fullMap" hidden><canvas id="bigmap" width="420" height="280"></canvas></div></section>
 <section class="panel battle" id="battle"><h3 id="battleTitle">전투</h3><div id="tacticalPanel"><div id="tacticalBoard"></div><div id="tacticalSide"><b id="tacticalStatus">전투 준비</b><div id="tacticChoices"></div><button id="battleStart">⚔️ 전투 시작</button><small>아군은 아래 3줄에 배치 · 캐릭터 선택 후 전술 지정</small></div></div><p class="log" id="battleLog"></p><div class="actions"><button id="speed">전투 속도 ×1</button><button id="battleHeal">회복약 사용</button></div><p class="hint">배치와 전술을 정한 후 자동으로 싸웁니다.</p></section>
@@ -429,7 +429,7 @@ function wandererAttackFrame(direction,phase){
  pixels+=line(guardX-sign,guardY-1,guardX+sign,guardY+1,"#b4896d",1);
  pixels+=line(guardX,guardY,tipX,tipY,"#536674",3);
  pixels+=line(guardX,guardY,tipX,tipY,"#e0edf0",1);
- const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="-14 -12 58 58" shape-rendering="crispEdges">'+pixels+'</svg>';
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 38 43" shape-rendering="crispEdges">'+pixels+'</svg>';
  wandererAttackCache.set(key,svg);return svg;
 }
 const wandererArt=wandererFrame("down",1);
