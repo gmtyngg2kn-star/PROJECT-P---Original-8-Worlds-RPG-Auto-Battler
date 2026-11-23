@@ -231,7 +231,7 @@ body:has(#battle.active) #battle .arena{display:none!important}body:has(#battle.
 .battle-skill-effect.fx-magic{color:#88d8ff;border-style:double;box-shadow:0 0 10px #88d8ff}
 /* v0.9.32: directional sword sweep layered over the approved wanderer art */
 .wanderer-sword-slash{position:absolute;left:50%;top:37%;width:32px;height:32px;border:solid #c8e6f2;border-width:3px 3px 0 0;border-radius:50%;box-shadow:3px -2px 5px #75bce599;pointer-events:none;z-index:5;opacity:0;transform-origin:50% 50%}
-</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.34</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
+</style></head><body><header><div><h1>PROJECT P <small>싱글 RPG v0.9.35</small></h1><small>무림세계 · 제1~2장</small></div><div class="headbuttons"><button id="menuToggle" aria-label="메뉴">☰ 메뉴</button><button id="reset">처음부터</button></div></header>
 <main><section class="panel" id="statsPanel"><div class="stats"><b id="level"></b><span id="xp"></span><span id="gold"></span><span id="potions"></span><span id="quest"></span></div></section>
 <section class="panel fieldpanel" id="fieldPanel"><div class="story" id="story"></div><div id="dialogue" hidden><b id="speaker"></b><p id="dialogueText"></p><button id="dialogueNext">다음 대사 ▶</button></div><div class="field" id="field" aria-label="무림 필드"><div id="worldLayer"><canvas id="terrainCanvas" width="720" height="540"></canvas></div><div id="fieldActor"></div><div id="landscapeHud"><div id="landscapeStatus">무림 · 탐험</div><div id="floatStick"><div id="floatKnob"></div></div><button id="contextAction" hidden>대화</button><button id="landscapeMenu">☰</button></div></div><div class="hudrow"><div class="mapcolumn"><canvas id="minimap" width="220" height="120" aria-label="미니맵"></canvas><span id="location"></span></div><div class="quickactions"><button id="talk">대화</button><button id="heal">회복</button><button id="partyBtn">동료</button><button id="mapToggle">지도</button></div></div><div class="joyrow"><div id="joystick" aria-label="이동 조이스틱"><div id="joyKnob"></div></div><div class="questmini"><b id="miniQuest">현재 목표</b><span>조이스틱으로 이동</span></div></div><div id="fullMap" hidden><canvas id="bigmap" width="420" height="280"></canvas></div></section>
 <section class="panel battle" id="battle"><h3 id="battleTitle">전투</h3><div id="tacticalPanel"><div id="tacticalBoard"></div><div id="tacticalSide"><b id="tacticalStatus">전투 준비</b><div id="tacticChoices"></div><button id="battleStart">⚔️ 전투 시작</button><small>아군은 아래 3줄에 배치 · 캐릭터 선택 후 전술 지정</small></div></div><p class="log" id="battleLog"></p><div class="actions"><button id="speed">전투 속도 ×1</button><button id="battleHeal">회복약 사용</button></div><p class="hint">배치와 전술을 정한 후 자동으로 싸웁니다.</p></section>
@@ -369,45 +369,67 @@ function wandererAttackFrame(direction,phase){
  const base=originalWalkDirections[originalWalkIndex[direction]??0];
  const left=direction==="left"||direction.endsWith("Left");
  const back=direction==="up"||direction.startsWith("up");
- const sign=left?-1:1,shoulderX=left?8:16,shoulderY=back?16:17;
- // Twelve individually timed body/arm/weapon poses: windup, step, swing, follow-through, recovery.
+ const sign=left?-1:1;
+ // Every pose specifies a full-body stance: lean, crouch, rotation, head,
+ // both legs, both arms, cape and sword. The approved palette is preserved.
  const poses=[
-  [0,0,1,4,3,-6,0],[0,0,1,3,2,-8,0],[-1,0,2,1,4,-10,0],
-  [-2,0,3,0,6,-10,0],[-2,-1,4,-1,8,-9,1],[-1,-1,5,-2,11,-7,1],
-  [1,-1,6,-1,13,-3,1],[2,0,7,1,14,2,1],[2,1,6,3,12,7,1],
-  [1,1,4,5,9,10,0],[0,0,2,5,5,9,0],[0,0,1,4,3,-6,0]
+  [0,0,0,0,0,0,0,0,1,4,3,-6],
+  [-1,1,-1,0,0,1,-1,0,1,3,2,-8],
+  [-2,2,-2,-1,-1,2,-2,1,2,1,4,-10],
+  [-3,2,-3,-1,-2,3,-2,2,3,0,6,-10],
+  [-2,1,-3,0,-2,4,-3,2,4,-1,8,-9],
+  [-1,0,-2,1,-1,5,-3,2,5,-2,11,-7],
+  [1,-1,1,2,1,6,-4,3,6,-1,13,-3],
+  [3,-1,3,2,2,7,-4,3,7,1,14,2],
+  [3,0,3,1,2,6,-3,2,6,3,12,7],
+  [2,1,2,0,1,4,-2,1,4,5,9,10],
+  [1,1,1,0,0,2,-1,0,2,5,5,9],
+  [0,0,0,0,0,0,0,0,1,4,3,-6]
  ];
  const p=poses[Math.max(0,Math.min(11,phase))];
- const [bodyX,bodyY,handDX,handDY,tipDX,tipDY,step]=p;
- const handX=shoulderX+sign*handDX,handY=shoulderY+handDY;
- const tipX=shoulderX+sign*tipDX,tipY=shoulderY+tipDY;
+ const [lean,crouch,twist,headTilt,headTurn,frontStep,rearStep,cape,handDX,handDY,tipDX,tipDY]=p;
+ const shoulderX=left?8:16,shoulderY=back?16:17;
+ const sx=shoulderX+sign*(lean+twist),sy=shoulderY+crouch;
+ const hx=sx+sign*handDX,hy=sy+handDY;
+ const tipX=sx+sign*tipDX,tipY=sy+tipDY;
  let pixels="";
  for(let y=0;y<32;y++)for(let x=0;x<24;x++){
-  const arm=x>=shoulderX-2&&x<=shoulderX+2&&y>=shoulderY+1&&y<=shoulderY+8;
-  if(arm)continue;
   const color=originalWalkPalette[parseInt(base[y*24+x],16)];
   if(!color||color==="transparent")continue;
-  const torso=y>=11&&y<25,foot=y>=25;
-  const xx=x+(torso?bodyX:0)+(foot&&step?(x<12?1:-1):0);
-  const yy=y+(torso?bodyY:0)+(foot&&step&&x<12?-1:0);
+  // Remove both static forearms before posing the two independently.
+  if(y>=16&&y<=25&&(x<=5||x>=18))continue;
+  let xx=x,yy=y;
+  if(y<11){xx+=sign*(lean+headTurn)+Math.round((y-5)*headTilt/7);yy+=crouch;}
+  else if(y<24){
+   const t=(y-11)/13;
+   xx+=sign*Math.round(lean+twist*(1-t));
+   yy+=Math.round(crouch*(1-t));
+   if((x<6||x>18)&&y>=17)xx+=sign*(x<12?-cape:cape);
+  }else{
+   if(x<12){xx+=sign*frontStep;yy-=Math.min(2,Math.floor(frontStep/3));}
+   else{xx+=sign*rearStep;yy+=Math.min(2,Math.floor(Math.abs(rearStep)/2));}
+  }
   pixels+='<rect x="'+xx+'" y="'+yy+'" width="1" height="1" fill="'+color+'"/>';
  }
  function line(x1,y1,x2,y2,color,width){
   return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+color+'" stroke-width="'+width+'" stroke-linecap="square"/>';
  }
- const sx=shoulderX+bodyX,sy=shoulderY+bodyY;
- // Upper arm and sleeve, forearm, hand, crossguard, and blade move together.
- const elbowX=sx+sign*Math.max(1,Math.round(handDX*.55));
- const elbowY=sy+Math.round(handDY*.5);
- pixels+=line(sx,sy,elbowX,elbowY,"#472e2d",4);
- pixels+=line(elbowX,elbowY,handX,handY,"#83685a",3);
- pixels+='<rect x="'+(handX-1)+'" y="'+(handY-1)+'" width="2" height="2" fill="#ddaf89"/>';
- const guardX=handX+sign*1,guardY=handY-1;
- pixels+=line(handX,handY,guardX,guardY,"#372222",2);
- pixels+=line(guardX-sign*1,guardY-1,guardX+sign*1,guardY+1,"#b4896d",1);
+ // Off-hand balances the torso rotation while sword arm makes the strike.
+ const offX=12-sign*6+sign*Math.round(lean/2),offY=18+crouch;
+ const offHandX=offX-sign*(2+Math.round(frontStep/3)),offHandY=23-Math.round(frontStep/3);
+ pixels+=line(offX,offY,offHandX,offHandY,"#472e2d",4);
+ pixels+=line(offX,offY,offHandX,offHandY,"#83685a",2);
+ pixels+='<rect x="'+(offHandX-1)+'" y="'+offHandY+'" width="2" height="2" fill="#b4896d"/>';
+ const elbowX=sx+sign*Math.round(handDX*.55),elbowY=sy+Math.round(handDY*.55);
+ pixels+=line(sx,sy,elbowX,elbowY,"#472e2d",5);
+ pixels+=line(elbowX,elbowY,hx,hy,"#83685a",3);
+ pixels+='<rect x="'+(hx-1)+'" y="'+(hy-1)+'" width="2" height="2" fill="#ddaf89"/>';
+ const guardX=hx+sign,guardY=hy-1;
+ pixels+=line(hx,hy,guardX,guardY,"#372222",2);
+ pixels+=line(guardX-sign,guardY-1,guardX+sign,guardY+1,"#b4896d",1);
  pixels+=line(guardX,guardY,tipX,tipY,"#536674",3);
  pixels+=line(guardX,guardY,tipX,tipY,"#e0edf0",1);
- const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 38 43" shape-rendering="crispEdges">'+pixels+'</svg>';
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="-14 -12 58 58" shape-rendering="crispEdges">'+pixels+'</svg>';
  wandererAttackCache.set(key,svg);return svg;
 }
 const wandererArt=wandererFrame("down",1);
@@ -572,8 +594,8 @@ function animateBattleVisuals(now){
     v.walkClock+=dt;
     if(v.walkClock>=.105){v.frame=(v.frame+1)%4;v.walkClock=0;}
    }else{v.frame=1;v.walkClock=0;}
-   const attacking=v.attackStart&&now-v.attackStart<360;
-   const phase=attacking?Math.min(11,Math.floor((now-v.attackStart)/30)):0;
+   const attacking=v.attackStart&&now-v.attackStart<456;
+   const phase=attacking?Math.min(11,Math.floor((now-v.attackStart)/38)):0;
    const pose=attacking?"attack:"+v.attackDirection+":"+phase:v.dir+":"+v.frame;
    if(v.lastPose!==pose){
     v.sprite.innerHTML=attacking?wandererAttackFrame(v.attackDirection,phase):wandererFrame(v.dir,v.frame);
